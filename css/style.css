@@ -1,0 +1,41 @@
+body{
+    background-color: #2e2e2e;
+}
+svg{
+    background-color: #2e2e2e;
+    position: relative;
+    left: 0px;
+    top: 0px;
+}
+
+svg text{
+    user-select: none;
+}
+
+line.graphEdge2.nonhover{
+    opacity: 0.25;
+}
+
+line.graphEdge2.hover{
+    stroke: #fc0000;
+    stroke-width: 8px;
+}
+
+line.graphEdge2.selected{
+    stroke: #fc0000;
+}
+
+line.graphEdge2{
+    stroke: #fff130;
+    stroke-width: 5px;
+    transition: stroke-width 0.3s, opacity 0.3s, stroke 0.3s;
+}
+line.graphEdge2.directed.tense{
+    stroke:#fc0000;
+}
+circle.graphNode2{
+    fill: #4845ff;
+    stroke: #e7e7e7;
+    stroke-width: 4px;
+    transition: r 0.3s;
+}
