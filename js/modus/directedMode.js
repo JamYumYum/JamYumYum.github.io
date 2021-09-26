@@ -374,7 +374,6 @@ const directedMode = {
         .style("font-family", "arial")
         .style("font-size", this.textSize)
         .style("font-weight", "bold")
-        console.log("drawing done")
     },
     //initiate simulation
     initiateSimulation : async function(name, field,sim){
@@ -397,7 +396,6 @@ const directedMode = {
             .on('tick', () => {
                 this.posCalc()
                 if(this.startup){
-                    console.log("flag first update")
                     this.update()
                     this.startup = false
                 }
@@ -406,8 +404,6 @@ const directedMode = {
         
         
         this.draw(name,field,sim);
-        //sim.tick(1)
-        //TODO seperate for 2 simulations
         
         
         if(!this.startup){
@@ -421,3 +417,4 @@ const directedMode = {
 }
 
 export {directedMode}
+//TODO animation tense edge & edge text position
