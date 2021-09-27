@@ -63,8 +63,8 @@ function main(){
     //setTimeout(()=>{testMode.reset()}, 6000)
     //let interactiveG = new InteractiveGraph(kruskalMode,graph,"svg1")
     //interactiveG.initiateSimulation()
-    //mstSelectN.start()
-    vsDijkstra.start()
+    mstSelectN.start()
+    //vsDijkstra.start()
 }
 
 window.onload = main;

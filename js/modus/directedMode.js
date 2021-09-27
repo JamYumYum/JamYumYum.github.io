@@ -331,12 +331,10 @@ const directedMode = {
             .drag()
             .on("start", v=>{
                 if (!d3.event.active) sim.alphaTarget(0.3).restart();
-                console.log(v)
                 v.fx = v.x;
                 v.fy = v.y;
             })
             .on("drag", v=>{
-                console.log(d3.event.x)
                 v.fx = d3.event.x;
                 v.fy = d3.event.y;
             })
@@ -401,8 +399,9 @@ const directedMode = {
                 }
             })
         ;
-        
-        
+        sim.velocityDecay(0.1)
+        sim.tick(500)
+        sim.velocityDecay(0.3)
         this.draw(name,field,sim);
         
         

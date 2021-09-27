@@ -15,23 +15,23 @@ const vsDijkstra = {
     dijkstraData : undefined,
     totalRelaxations : 0,
     start : function(){
-        //TODO initiate 2 force simulations
+        //initiate 2 force simulations
         this.restart()
 
         document.addEventListener("legalMove", ()=> vsDijkstra.checkState())
-        document.addEventListener("keydown", vsDijkstra.logKey)
+        document.addEventListener("keydown", vsDijkstra.logKey.bind(this))
     },
     logKey : function(e){
         console.log(e)
         switch(e.code){
             case "KeyR":
-                vsDijkstra.reset()
+                this.reset()
                 break
             case "KeyE":
-                vsDijkstra.undo()
+                this.undo()
                 break
             case "KeyQ":
-                vsDijkstra.restart()
+                this.restart()
                 break
         }
     },
@@ -54,15 +54,15 @@ const vsDijkstra = {
         if(this.totalRelaxations > 0){
             directedMode.reset()
             vsDijkstraGraph.reset()
-            vsDijkstra.totalRelaxations = 0
+            this.totalRelaxations = 0
         }
     },
     undo : function(){
         //TODO undo last move
-        if(vsDijkstra.totalRelaxations > 0){
+        if(this.totalRelaxations > 0){
             directedMode.undo()
             vsDijkstraGraph.undo()
-            vsDijkstra.totalRelaxations -= 1
+            this.totalRelaxations -= 1
         }
 
     },
@@ -105,6 +105,8 @@ const vsDijkstra = {
     },
     exit : function(){
         //TODO cleanup all UI elements, forcedirected graph
+        document.removeEventListener("legalMove", ()=> vsDijkstra.checkState())
+        document.removeEventListener("keydown", vsDijkstra.logKey)
     }
 }
 

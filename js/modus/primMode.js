@@ -2,6 +2,7 @@ import * as Algo from '../algo.js';
 import * as Vector from '../2dVector.js'
 import { customEvent } from '../events/customEvent.js';
 const primMode = {
+    ID : "prim",
     graph : undefined,
     link : undefined,
     node : undefined,
@@ -40,6 +41,7 @@ const primMode = {
     selection : [],
     startVertex : 0,
     selectedSet : [],
+    svg : undefined,
     freeze : false,
     setGraph : function(g){
         this.graph = g
@@ -66,6 +68,10 @@ const primMode = {
         this.selectedSet.pop()
         this.update()
     },
+    cleanup : function(){
+        d3.selectAll("svg."+this.svg)
+        .remove()
+    },
 
     lineHover : function(v,name){
         //TODO
@@ -74,7 +80,23 @@ const primMode = {
     lineUnhover : function(name){
         //TODO
     },
-
+    goodMove : function(){
+        //TODO good move, if selected edge is a safe edge and has min weight
+        let recentEdge = this.selection[this.selection.length-1]
+        let setState = this.selectedSet.slice()
+        setState.pop()
+        for(let i = 0; i< this.graph.edges.length;i++){
+            let edge = this.graph.edges[i]
+            if(( (setState.indexOf(edge.source.name) < 0) || (setState.indexOf(edge.target.name) < 0) )
+            && (!(setState.indexOf(edge.source.name) < 0) || !(setState.indexOf(edge.target.name) < 0))){
+                    //safe edge
+                    if(edge.key < recentEdge.key){
+                        return false
+                    }
+            }
+        }
+        return true
+    },
     lineClick : function(v,name){
         d3.selectAll("line.graphEdge."+name)
         .filter(d=> v.index===d.index)
@@ -89,6 +111,7 @@ const primMode = {
                 else{
                     this.selectedSet.push(e.target.name)
                 }
+                document.dispatchEvent(customEvent.legalMove)
             }
         })
         this.update()
@@ -293,6 +316,7 @@ const primMode = {
     },
 
     initiateSimulation : async function(name, field,sim){
+        this.svg = name
         d3
         .select("body")
             .append("svg")

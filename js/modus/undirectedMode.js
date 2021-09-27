@@ -2,6 +2,7 @@ import * as Algo from '../algo.js';
 import * as Vector from '../2dVector.js'
 import * as Color from '../tools/colorGenerator.js'
 const undirectedMode = {
+    ID : "undirected",
     graph : undefined,
     link : undefined,
     node : undefined,

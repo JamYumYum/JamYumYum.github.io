@@ -2,7 +2,9 @@ import * as Algo from '../algo.js';
 import * as Vector from '../2dVector.js'
 import * as Color from '../tools/colorGenerator.js'
 import UnionFind from '../ds/unionFind.js';
+import { customEvent } from '../events/customEvent.js';
 const kruskalMode = {
+    ID : "kruskal",
     graph : undefined,
     link : undefined,
     node : undefined,
@@ -42,6 +44,7 @@ const kruskalMode = {
     selection : [],
     colors : undefined,
     forest: undefined,
+    svg : undefined,
     freeze : false,
     setGraph : function(g){
         this.graph = g
@@ -69,7 +72,10 @@ const kruskalMode = {
         this.forest.undo()
         this.update()
     },
-
+    cleanup : function(){
+        d3.selectAll("svg."+this.svg)
+        .remove()
+    },
     lineHover : function(v,name){
         //TODO
     },
@@ -77,7 +83,20 @@ const kruskalMode = {
     lineUnhover : function(name){
         //TODO
     },
-
+    goodMove : function(v){
+        //TODO good move, if selected edge is a safe edge and has min weight
+        let recentEdge = this.selection[this.selection.length-1]
+        let forestState = this.forest.stateMemory[this.forest.stateMemory.length-1]
+        for(let i = 0; i<this.graph.edges.length; i++){
+            let e = this.graph.edges[i]
+            if(forestState[e.source.name] != forestState[e.target.name]){
+                if(recentEdge.key > e.key){
+                    return false
+                }
+            }
+        }
+        return true
+    },
     lineClick : function(v,name){
         d3.selectAll("line.graphEdge."+name)
         .filter(d=> v.index===d.index)
@@ -90,6 +109,7 @@ const kruskalMode = {
                 }
                 else{
                     this.selection.push(d)
+                    document.dispatchEvent(customEvent.legalMove)
                 }
             }
             console.log(this.selection)
@@ -275,6 +295,7 @@ const kruskalMode = {
     },
 
     initiateSimulation : async function(name, field,sim){
+        this.svg = name
         d3
         .select("body")
             .append("svg")

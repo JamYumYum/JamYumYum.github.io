@@ -393,6 +393,9 @@ const vsDijkstraGraph = {
             })
         ;
         this.sim1 = sim
+        sim.velocityDecay(0.1)
+        sim.tick(500)
+        sim.velocityDecay(0.3)
         this.draw(name,field,sim);
         //TODO seperate for 2 simulations
         if(!this.startup){

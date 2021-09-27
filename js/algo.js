@@ -7,14 +7,14 @@ import PQueue from './ds/pQueue.js';
  * Starting vertex, which the algorithm uses.
  */
 export function prim (graph, startvertex) {
-    const pQueue = new PQueue();
+    let pQueue = new PQueue();
     for (let i = 0; i < graph.edges.length; i++){
         if((graph.edges[i].source === startvertex) || (graph.edges[i].target === startvertex)){
             pQueue.insert(graph.edges[i]);
         }
     }
 
-    const SetToArray = s => {
+    let SetToArray = s => {
         let a = [];
         s.forEach(element => {
             a.push(element);
@@ -22,7 +22,7 @@ export function prim (graph, startvertex) {
         return a;
     }
 
-    const result = {vertexSetStep : [], mstStep : [], pQueueStep : []};
+    let result = {vertexSetStep : [], mstStep : [], pQueueStep : []};
     result.vertexSetStep.push(SetToArray(new Set().add(startvertex)));
     result.mstStep.push([]);
     result.pQueueStep.push(pQueue.data.slice());
@@ -66,26 +66,26 @@ export function prim (graph, startvertex) {
 }
 
 export function kruskal (graph) {
-    const sortedEdges = [];
-    const currentMst= [];
-    const minHeap = new PQueue();
+    let sortedEdges = [];
+    let currentMst= [];
+    let minHeap = new PQueue();
     for(let i = 0; i < graph.edges.length ; i++){
         minHeap.insert(graph.edges[i]);
     }
 
-    const limit = minHeap.data.length;
+    let limit = minHeap.data.length;
     for(let i = 1; i < limit ; i++){
         sortedEdges.push(minHeap.extractMin());
     }
 
     
-    const forest = [];
+    let forest = [];
     for(let i = 0; i<graph.vertices.length ; i++){
         let s = [];
         s.push(graph.vertices[i].name);
         forest.push(s.slice());
     }
-    const find = v => {
+    let find = v => {
         let r;
         forest.forEach(element => {
             if(element.indexOf(v)!= -1){
@@ -94,7 +94,7 @@ export function kruskal (graph) {
         });
         return r;
     }
-    const union = (v1,v2) => {
+    let union = (v1,v2) => {
         let s1 = find(v1);
         let s2 = find(v2);
         if(s1 === s2){
@@ -106,7 +106,7 @@ export function kruskal (graph) {
             return true;
         }
     }
-    const copy = a =>{
+    let copy = a =>{
         let array = [];
         a.forEach(sA => {
             let subArray = [];
@@ -118,7 +118,7 @@ export function kruskal (graph) {
         return array;
     }
 
-    const result = {forestStep:[], mstStep:[], edgeStep:[]};
+    let result = {forestStep:[], mstStep:[], edgeStep:[]};
     result.forestStep.push(copy(forest));
     result.mstStep.push([]);
     result.edgeStep.push(sortedEdges.slice());
