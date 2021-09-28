@@ -3,7 +3,8 @@ import { kruskalMode } from "../../modus/kruskalMode.js"
 import { undirectedMode } from "../../modus/undirectedMode.js"
 import * as G from '../../graphGenerator.js';
 import * as A from '../../algo.js'
-const mstSelectN = {
+
+const buildMST = {
     mode : undefined,
     graph : undefined,
     svg1 : undefined,
@@ -12,30 +13,24 @@ const mstSelectN = {
     primData : undefined,
     kruskalData : undefined,
     data : undefined,
-    initialEdgeSelection : [],
     totalWeight : undefined,
+    minWeight : undefined,
     edgeSelection : [],
     totalMoves : undefined,
-    movesRating : [],
     freeze : false,
-    //UI elements
-    body : document.body,
-    
-    
     start : function(){
         //TODO selection for visual help (prim/kruskal/none), setting up interactive force directed graph
         this.graph = G.mstGraph() // set graph TODO? change to better graph
         this.primData = A.prim(this.graph, 0)
         this.kruskalData = A.kruskal(this.graph)
-        this.mode = primMode
+        this.mode = undirectedMode
         this.mode.setGraph(this.graph)
         this.mode.initiateSimulation(this.name1,this.svg1,this.sim1)
         
         this.generateGame()
         // TODO move eventlistener to selectMode
-        document.addEventListener("edgeClicked", this.test)
-        document.addEventListener("legalMove", ()=> mstSelectN.checkState())
-        document.addEventListener("keydown", mstSelectN.logKey.bind(this))
+        document.addEventListener("legalMove", ()=> buildMST.checkState())
+        document.addEventListener("keydown", buildMST.logKey.bind(this))
     },
     logKey : function(e){
         console.log(e)
@@ -55,6 +50,9 @@ const mstSelectN = {
             case "Digit2":
                 this.selectMode(kruskalMode)
                 break
+            case "Digit3":
+                this.selectMode(undirectedMode)
+                break
         }
     },
     restart : function(){
@@ -67,28 +65,14 @@ const mstSelectN = {
         this.mode.initiateSimulation(this.name1,this.svg1,this.sim1)
         this.generateGame()
     },
-    test : function(){
-        console.log("clicked")
-    },
-    drawUI : function(){
-        //TODO draw UI, link values(movesleft), add information log
-    },
-    selectModeUI : function(){
-        //TODO draw UI for mode selection(prim/kruskal/none), add eventlisteners
-    },
     selectMode : function(mode){
         //TODO cleanup selectModeUI elements,eventlisteners, set the mode, call start
         this.mode = mode
         this.restart()
     },
     generateGame : function(){
-        //TODO generate a random graph, initial state, number of next selections
+        //TODO
         this.freeze = true
-        this.totalMoves = Math.floor(3 + Math.random()* 3)
-        let indexSelected = 0
-        this.edgeSelection = []
-        this.initialEdgeSelection = []
-        this.movesRating = []
         switch(this.mode.ID){
             case "prim":
                 this.data = this.primData
@@ -105,30 +89,25 @@ const mstSelectN = {
                 }
                 break
         }
-        indexSelected = Math.floor(Math.random()* (this.data.mstStep[this.data.mstStep.length-1].length - this.totalMoves))
-        for(let i = 0; i< indexSelected+1;i++){
-            this.initialEdgeSelection.push(this.data.mstStep[this.data.mstStep.length-1][i])
-        }
-        this.edgeSelection = this.initialEdgeSelection.slice()
-        for(let i = 0; i < this.edgeSelection.length; i++){
-            this.mode.lineClick(this.edgeSelection[i],this.name1)
+        this.edgeSelection = []
+        this.totalMoves = this.graph.vertices.length - 1
+        this.totalWeight = 0
+        this.minWeight = 0
+        for(let i=0; i<this.data.mstStep[this.data.mstStep.length-1].length; i++ ){
+            this.minWeight += this.data.mstStep[this.data.mstStep.length-1][i].key
         }
         this.freeze = false
     },
-    
-    reset : function(){
-        //TODO reset to initial state
-        let currentLength = this.edgeSelection.length
-        for(let i =0; i < (currentLength-this.initialEdgeSelection.length);i++){
-            this.undo()
-        }
+    reset(){
+        this.mode.reset()
+        this.edgeSelection = []
+        this.totalWeight = 0
     },
-    undo : function(){
-        //TODO undo last move
-        if((this.edgeSelection.length - this.initialEdgeSelection.length) > 0){
+    undo(){
+        if(this.edgeSelection.length != 0){
             this.mode.undo()
-            this.edgeSelection.pop()
-            this.movesRating.pop()
+            let e = this.edgeSelection.pop()
+            this.totalWeight -= e.key
         }
     },
     win : function(){
@@ -140,32 +119,19 @@ const mstSelectN = {
         console.log("lose")
     },
     checkState : function(){
+        //TODO
         // on click on a safe edge 
         if(this.freeze){
             return
         }
         this.edgeSelection.push(this.mode.selection[this.mode.selection.length-1])
-        if(this.mode.goodMove()){
-            this.movesRating.push(true)
-            console.log("good move")
-        }
-        else{
-            this.movesRating.push(false)
-            console.log("bad move")
-        }
-        // no more moves left => check for win
-        if(this.movesRating.length === this.totalMoves){
-            let win = true
-            for(let i = 0; i< this.movesRating.length; i++){
-                if(!this.movesRating[i]){
-                    win = false
-                }
-            }
-            if(win){
-                this.win()
+        this.totalWeight += this.edgeSelection[this.edgeSelection.length-1].key
+        if(this.edgeSelection.length === this.totalMoves){
+            if(this.totalWeight > this.minWeight){
+                this.lose()
             }
             else{
-                this.lose()
+                this.win()
             }
         }
     },
@@ -177,7 +143,6 @@ const mstSelectN = {
         //TODO cleanup UI, force directed graph, eventlisteners
         this.cleanup()
     }
-
 }
 
-export{mstSelectN}
+export {buildMST}

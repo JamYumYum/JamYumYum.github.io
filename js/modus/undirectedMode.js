@@ -1,6 +1,7 @@
 import * as Algo from '../algo.js';
 import * as Vector from '../2dVector.js'
 import * as Color from '../tools/colorGenerator.js'
+import { customEvent } from '../events/customEvent.js';
 const undirectedMode = {
     ID : "undirected",
     graph : undefined,
@@ -39,6 +40,7 @@ const undirectedMode = {
     edgeSelection : [],
     directG : true,
     selection : [],
+    svg : undefined,
     freeze : false,
     setGraph : function(g){
         this.graph = g
@@ -86,8 +88,14 @@ const undirectedMode = {
         .attr("stroke", d=>{
             if(this.selection.indexOf(d) < 0) this.selection.push(d)
             console.log(this.selection)
-            console.log(Algo.checkCycle(this.selection))
-            return this.lineSelectedColor
+            if(!Algo.checkCycle(this.selection)){
+                document.dispatchEvent(customEvent.legalMove)
+                return this.lineSelectedColor
+            }
+            else{
+                this.selection.pop()
+                return this.lineHoverColor
+            }
         })
     },
 
@@ -222,6 +230,7 @@ const undirectedMode = {
     },
     //initiate simulation
     initiateSimulation : async function(name, field,sim){
+        this.svg = name
         d3
         .select("body")
             .append("svg")

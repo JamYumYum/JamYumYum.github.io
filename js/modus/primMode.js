@@ -64,13 +64,11 @@ const primMode = {
     },
 
     undo : function(){
-        this.selection.pop()
-        this.selectedSet.pop()
-        this.update()
-    },
-    cleanup : function(){
-        d3.selectAll("svg."+this.svg)
-        .remove()
+        if(this.selection.length != 0){
+            this.selection.pop()
+            this.selectedSet.pop()
+            this.update()
+        }
     },
 
     lineHover : function(v,name){

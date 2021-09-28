@@ -14,6 +14,8 @@ import {primMode} from './modus/primMode.js'
 import {vsDijkstraGraph} from './modus/vsDijkstraGraph.js'
 import {mstSelectN} from './scenes/gamemode/mstSelectN.js'
 import {vsDijkstra} from './scenes/gamemode/vsDijkstra.js'
+import { buildMST } from './scenes/gamemode/buildMST.js';
+import { ssspTree } from './scenes/gamemode/ssspTree.js';
 
 let graph;
 
@@ -63,8 +65,10 @@ function main(){
     //setTimeout(()=>{testMode.reset()}, 6000)
     //let interactiveG = new InteractiveGraph(kruskalMode,graph,"svg1")
     //interactiveG.initiateSimulation()
-    mstSelectN.start()
+    //mstSelectN.start()
     //vsDijkstra.start()
+    //buildMST.start()
+    ssspTree.start()
 }
 
 window.onload = main;

@@ -72,10 +72,6 @@ const kruskalMode = {
         this.forest.undo()
         this.update()
     },
-    cleanup : function(){
-        d3.selectAll("svg."+this.svg)
-        .remove()
-    },
     lineHover : function(v,name){
         //TODO
     },
