@@ -2,6 +2,7 @@ import * as Algo from '../algo.js';
 import * as Vector from '../2dVector.js'
 import * as Color from '../tools/colorGenerator.js'
 import { customEvent } from '../events/customEvent.js';
+import { nodeNameMap } from '../tools/nodeNameMap.js';
 const undirectedMode = {
     ID : "undirected",
     graph : undefined,
@@ -21,30 +22,33 @@ const undirectedMode = {
     sim2 : undefined,
     width : 1200,
     height : 700,
-    nodeR1 : 20,
-    nodeR2 : 24,
+    nodeR1 : 28,
+    nodeR2 : 32,
     nodeColor : "hsl(220.1251252363263,100%,50%)",//"#4845ff",
-    nodeBorderWidth : 4,
+    nodeBorderWidth : 2,
     nodeBorderColor : "#e7e7e7",
     textSize : 15,
     tenseLinkColor : "#fc0000",
     relaxLinkSize : 0,
     relaxLinkColor : "#fff130",
     lineSelectedColor : "#fc0000",
-    lineHoverColor : "#fc0000",
-    lineUnhoverColor : "#fff130",
+    lineHoverColor : "white",//"#fc0000",
+    lineUnhoverColor : "white",//"#fff130",
     lineUnhoverOpacity : 0.25,
-    clickboxSize : 15,
+    clickboxSize : 20,
     edgeTextOffset : 15,
     animationDuration : 300,
     edgeSelection : [],
     directG : true,
     selection : [],
     svg : undefined,
+    nameMap : undefined,
     freeze : false,
     setGraph : function(g){
         this.graph = g
         this.selection = []
+        this.nameMap = nodeNameMap
+        this.nameMap.map(this.graph.vertices)
     },
 
     denyInput : function(){
@@ -66,25 +70,35 @@ const undirectedMode = {
     },
 
     lineHover : function(v,name){
+        /*
         d3.selectAll("line.graphEdge."+name).filter(d=> v.index===d.index)
         //.transition().duration(animationDuration)
         .attr("stroke", this.lineHoverColor)//.classed("hover", true)
         d3.selectAll("line.graphEdge."+name).filter(d=> v.index!=d.index)
         //.transition().duration(animationDuration)
         .attr("opacity", this.lineUnhoverOpacity)//.classed("nonhover", true)
+        */
+        d3.selectAll("line.clickbox."+name).filter(d=> v.index===d.index)
+        .attr("opacity", 0.5)
     },
 
     lineUnhover : function(name){
+        
         d3.selectAll("line.graphEdge."+name)
         //.transition().duration(animationDuration)
         .attr("stroke", e=>{if(this.selection.indexOf(e) < 0){return this.lineUnhoverColor} else{return this.lineSelectedColor}})
-        .attr("opacity", 1)//.classed("hover", false).classed("nonhover", false)
+        //.attr("opacity", 1)//.classed("hover", false).classed("nonhover", false)
+        
+        d3.selectAll("line.clickbox."+name)
+        .attr("opacity", 0)
     },
 
     lineClick : function(v,name){
         d3
         .selectAll("line.graphEdge."+name)
         .filter(d=> v.index===d.index)
+        .transition()
+        .duration(this.animationDuration)
         .attr("stroke", d=>{
             if(this.selection.indexOf(d) < 0) this.selection.push(d)
             console.log(this.selection)
@@ -93,17 +107,28 @@ const undirectedMode = {
                 return this.lineSelectedColor
             }
             else{
+                // would create cycle => illegal move
                 this.selection.pop()
+                document.dispatchEvent(customEvent.doNothing)
+                document.dispatchEvent(customEvent.illegalMove)
                 return this.lineHoverColor
             }
         })
+        this.update()
     },
 
     update : function(){
         //line update
         d3.selectAll("line.graphEdge")
+        .transition()
+        .duration(this.animationDuration)
         .attr("stroke", e=>{if(this.selection.indexOf(e) < 0){return this.lineUnhoverColor} else{return this.lineSelectedColor}})
         //nodetext update
+        d3
+        .selectAll("text.node")
+        .text(d=> {
+            return this.nameMap.nameMap[d.name]
+        })
         //TODO?
         //edgeweight text update
         d3
@@ -111,7 +136,7 @@ const undirectedMode = {
         .text(d=> d.key)
         .transition()
         .duration(this.animationDuration)
-        .style("fill", "white")
+        .style("fill", e=>{if(this.selection.indexOf(e) < 0){return this.lineUnhoverColor} else{return this.lineSelectedColor}})
     },
 
     posCalc : function(){
@@ -126,6 +151,9 @@ const undirectedMode = {
         .attr('x2', e => e.target.x)
         .attr('y2', e => e.target.y)
         //node text position
+        d3.selectAll('text.node')
+        .attr('x', v => v.x)
+        .attr('y', v => v.y + this.textSize/4)
         //TODO?
         //edge text position
         d3.selectAll("text.edge")
@@ -214,6 +242,19 @@ const undirectedMode = {
             })
         )
         //node Text field
+        this.nodeText = field
+        .selectAll("text.node."+name)
+        .data(this.graph.vertices)
+        .enter()
+        .append("text")
+        .classed("node", true)
+        .classed(name,true)
+        .attr("pointer-events", "none")
+        .attr("text-anchor", "middle")
+        .style("font-family", "Comic Sans MS")
+        .style("font-size", this.textSize)
+        .style("font-weight", "bold")
+        .style("fill", "black")
         // TODO?
         this.edgeText = field
         .selectAll("text.edge."+name)
@@ -224,7 +265,7 @@ const undirectedMode = {
         .classed(name,true)
         .attr("pointer-events", "none")
         .attr("text-anchor", "middle")
-        .style("font-family", "arial")
+        .style("font-family", "Comic Sans MS")
         .style("font-size", this.textSize)
         .style("font-weight", "bold")
     },

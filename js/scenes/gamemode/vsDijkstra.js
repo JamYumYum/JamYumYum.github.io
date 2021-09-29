@@ -48,6 +48,7 @@ const vsDijkstra = {
         directedMode.initiateSimulation(this.name1,this.svg1,this.sim1)//.then(directedMode.test())
         vsDijkstraGraph.initiateSimulation(this.name2,this.svg2,this.sim2)
         vsDijkstraGraph.freeze = true
+        console.log(this.dijkstraData)
     },
     reset : function(){
         //TODO reset state
@@ -105,6 +106,8 @@ const vsDijkstra = {
     },
     exit : function(){
         //TODO cleanup all UI elements, forcedirected graph
+        directedMode.cleanup()
+        vsDijkstraGraph.cleanup()
         document.removeEventListener("legalMove", ()=> vsDijkstra.checkState())
         document.removeEventListener("keydown", vsDijkstra.logKey)
     }

@@ -3,11 +3,13 @@ import * as Vector from '../2dVector.js'
 import * as Color from '../tools/colorGenerator.js'
 import UnionFind from '../ds/unionFind.js';
 import { customEvent } from '../events/customEvent.js';
+import { nodeNameMap } from '../tools/nodeNameMap.js';
 const kruskalMode = {
     ID : "kruskal",
     graph : undefined,
     link : undefined,
     node : undefined,
+    nodeName : undefined,
     nodeText : undefined,
     edgeText : undefined,
     linkClickbox : undefined,
@@ -22,10 +24,10 @@ const kruskalMode = {
     sim2 : undefined,
     width : 1200,
     height : 700,
-    nodeR1 : 20,
-    nodeR2 : 24,
+    nodeR1 : 28,
+    nodeR2 : 32,
     nodeColor : "#4845ff",
-    nodeBorderWidth : 4,
+    nodeBorderWidth : 2,
     nodeBorderColor : "#e7e7e7",
     textSize : 15,
     tenseLinkColor : "#fc0000",
@@ -36,7 +38,7 @@ const kruskalMode = {
     lineHoverColor : "#fc0000",
     lineUnhoverColor : "white",
     lineUnhoverOpacity : 0.25,
-    clickboxSize : 15,
+    clickboxSize : 20,
     edgeTextOffset : 15,
     animationDuration : 300,
     edgeSelection : [],
@@ -45,12 +47,15 @@ const kruskalMode = {
     colors : undefined,
     forest: undefined,
     svg : undefined,
+    nameMap : undefined,
     freeze : false,
     setGraph : function(g){
         this.graph = g
         this.colors = Color.getColorDiversity(g.vertices)
         this.selection = []
         this.forest = new UnionFind(this.graph.vertices)
+        this.nameMap = nodeNameMap
+        this.nameMap.map(this.graph.vertices)
     },
 
     denyInput : function(){
@@ -74,10 +79,14 @@ const kruskalMode = {
     },
     lineHover : function(v,name){
         //TODO
+        d3.selectAll("line.clickbox."+name).filter(d=> v.index===d.index)
+        .attr("opacity", 0.5)
     },
 
     lineUnhover : function(name){
         //TODO
+        d3.selectAll("line.clickbox."+name)
+        .attr("opacity", 0)
     },
     goodMove : function(v){
         //TODO good move, if selected edge is a safe edge and has min weight
@@ -99,8 +108,9 @@ const kruskalMode = {
         .attr("stroke", d=>{
             if(this.selection.indexOf(d) < 0){
                 if(!this.forest.union(d.source.name, d.target.name)){
-                    //TODO illegal edge selection click
-                    
+                    //illegal edge selection click, would create cycle
+                    document.dispatchEvent(customEvent.doNothing)
+                    document.dispatchEvent(customEvent.illegalMove)
                     console.log("illegal")
                 }
                 else{
@@ -128,11 +138,15 @@ const kruskalMode = {
                 return this.colors[this.forest.find(e.source.name)]
             }
         })
+        //nodename update
+        d3
+        .selectAll("text.name."+this.svg)
+        .text(d=> this.nameMap.nameMap[d.name])
         //nodetext
         d3
         .selectAll("text.node")
         .text(d=> {
-            return this.forest.find(d.name)
+            return "["+this.forest.find(d.name)+"]"
         })
         //edgeweight text update
         d3
@@ -171,10 +185,13 @@ const kruskalMode = {
         .attr('y1', e => e.source.y)
         .attr('x2', e => e.target.x)
         .attr('y2', e => e.target.y)
-        //node text position
-        d3.selectAll('text.node')
+        //node, edge text position
+        d3.selectAll('text.name.'+this.svg)
         .attr('x', v => v.x)
-        .attr('y', v => v.y + this.textSize/4)
+        .attr('y', v => v.y - this.textSize * 0.75)
+        d3.selectAll('text.node.'+this.svg)
+        .attr('x', v => v.x)
+        .attr('y', v => v.y + this.textSize * 0.75)
         //edge text position
         d3.selectAll("text.edge")
         .attr("x", e => {
@@ -261,6 +278,20 @@ const kruskalMode = {
                 v.fy = null;
             })
         )
+        //node name
+        this.nodeName = field
+        .selectAll("text.name."+name)
+        .data(this.graph.vertices)
+        .enter()
+        .append("text")
+        .classed("name", true)
+        .classed(name,true)
+        .attr("pointer-events", "none")
+        .attr("text-anchor", "middle")
+        .style("font-family", "Comic Sans MS")
+        .style("font-size", this.textSize)
+        .style("font-weight", "bold")
+        .style("fill", "black")
         //node Text field
         this.nodeText = field
         .selectAll("text.node."+name)
@@ -271,7 +302,7 @@ const kruskalMode = {
         .classed(name,true)
         .attr("pointer-events", "none")
         .attr("text-anchor", "middle")
-        .style("font-family", "arial")
+        .style("font-family", "Comic Sans MS")
         .style("font-size", this.textSize)
         .style("font-weight", "bold")
         .style("fill", "black")
@@ -285,7 +316,7 @@ const kruskalMode = {
         .classed(name,true)
         .attr("pointer-events", "none")
         .attr("text-anchor", "middle")
-        .style("font-family", "arial")
+        .style("font-family", "Comic Sans MS")
         .style("font-size", this.textSize)
         .style("font-weight", "bold")
     },

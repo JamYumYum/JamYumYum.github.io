@@ -1,11 +1,13 @@
 import * as G from '../graphGenerator.js';
 import * as Vector from '../2dVector.js'
 import SsspHelp from '../ds/ssspHelp.js';
+import { nodeNameMap } from '../tools/nodeNameMap.js';
 import { customEvent } from '../events/customEvent.js';
 const directedMode = {
     graph : undefined,
     link : undefined,
     node : undefined,
+    nodeName : undefined,
     nodeText : undefined,
     edgeText : undefined,
     linkClickbox : undefined,
@@ -18,12 +20,12 @@ const directedMode = {
     svg2 : undefined,
     sim1 : undefined,
     sim2 : undefined,
-    width : 800,
+    width : 1200,
     height : 700,
-    nodeR1 : 20,
-    nodeR2 : 24,
+    nodeR1 : 28,
+    nodeR2 : 32,
     nodeColor : "#4845ff",
-    nodeBorderWidth : 4,
+    nodeBorderWidth : 2,
     nodeBorderColor : "#e7e7e7",
     arrowSize : 20,
     tenseLinkSize : 10,
@@ -46,11 +48,26 @@ const directedMode = {
     ssspHelp : undefined,
     svg : undefined,
     totalTenseEdges : 0,
+    minWeight : undefined,
+    maxWeight : undefined,
+    nameMap : undefined,
     freeze : false,
     setGraph : function(g){
         this.graph = g
         this.startup = true
         this.ssspHelp = new SsspHelp(this.graph)
+        this.nameMap = nodeNameMap
+        this.nameMap.map(this.graph.vertices)
+        this.minWeight = this.graph.edges[0].key
+        this.maxWeight = this.graph.edges[0].key
+        for(let i = 0; i < this.graph.edges.length; i++){
+            if(this.minWeight>this.graph.edges[i].key){
+                this.minWeight = this.graph.edges[i].key
+            }
+            if(this.maxWeight<this.graph.edges[i].key){
+                this.maxWeight = this.graph.edges[i].key
+            }
+        }
     },
 
     setSvg : function(s1,s2){
@@ -113,6 +130,9 @@ const directedMode = {
             //successfully relaxed
             document.dispatchEvent(customEvent.legalMove)
         }
+        else{
+            document.dispatchEvent(customEvent.doNothing)
+        }
         console.log("click")
     },
 
@@ -158,10 +178,14 @@ const directedMode = {
                 }
             }
         })
+        //nodename update
+        d3
+        .selectAll("text.name."+this.svg)
+        .text(d=> this.nameMap.nameMap[d.name])
         //nodetext update
         d3
         .selectAll("text.node."+this.svg)
-        .text(d=> this.ssspHelp.distance[d.name])
+        .text(d=> "["+this.ssspHelp.distance[d.name]+"]")
         //edgeweight text update
         d3
         .selectAll("text.edge."+this.svg)
@@ -203,9 +227,12 @@ const directedMode = {
             return e.target.y - normalizeDXDY[1]*Math.cos(30*Math.PI/180)*(this.arrowSize+this.nodeR1)
         })
         //node, edge text position
+        d3.selectAll('text.name.'+this.svg)
+        .attr('x', v => v.x)
+        .attr('y', v => v.y - this.textSize * 0.75)
         d3.selectAll('text.node.'+this.svg)
         .attr('x', v => v.x)
-        .attr('y', v => v.y + this.textSize/4)
+        .attr('y', v => v.y + this.textSize * 0.75)
         d3.selectAll("text.edge."+this.svg)
         .attr("x", e => {
             let normalizeDXDY = Vector.normalize([e.target.x-e.source.x,e.target.y-e.source.y])
@@ -265,7 +292,11 @@ const directedMode = {
         .append("line")
         .attr('class', 'graphEdge')
         .classed(name, true)
-        .attr("stroke-width", d=> d.key)
+        .attr("stroke-width", d=> {
+            let delta = this.maxWeight - this.minWeight
+            let interval = delta / 11
+            return 1 + Math.floor((d.key-this.minWeight) / interval)
+        })
         .attr("stroke", this.lineUnhoverColor)
 
         this.linkClickbox = field
@@ -344,6 +375,19 @@ const directedMode = {
                 v.fy = null;
             })
         )
+        this.nodeName = field
+        .selectAll("text.name."+name)
+        .data(this.graph.vertices)
+        .enter()
+        .append("text")
+        .classed("name", true)
+        .classed(name,true)
+        .attr("pointer-events", "none")
+        .attr("text-anchor", "middle")
+        .style("font-family", "Comic Sans MS")
+        .style("font-size", this.textSize)
+        .style("font-weight", "bold")
+        .style("fill", "white")
 
         this.nodeText = field
         .selectAll("text.node."+name)
@@ -354,7 +398,7 @@ const directedMode = {
         .classed(name,true)
         .attr("pointer-events", "none")
         .attr("text-anchor", "middle")
-        .style("font-family", "arial")
+        .style("font-family", "Comic Sans MS")
         .style("font-size", this.textSize)
         .style("font-weight", "bold")
         .style("fill", "white")
@@ -369,7 +413,7 @@ const directedMode = {
         .attr("fill","white")
         .attr("pointer-events", "none")
         .attr("text-anchor", "middle")
-        .style("font-family", "arial")
+        .style("font-family", "Comic Sans MS")
         .style("font-size", this.textSize)
         .style("font-weight", "bold")
     },

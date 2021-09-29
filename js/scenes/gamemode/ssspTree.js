@@ -64,8 +64,9 @@ const ssspTree = {
     },
     exit : function(){
         //TODO cleanup all UI elements, forcedirected graph
-        document.removeEventListener("legalMove", ()=> vsDijkstra.checkState())
-        document.removeEventListener("keydown", vsDijkstra.logKey)
+        directedMode.cleanup()
+        document.removeEventListener("legalMove", ()=> ssspTree.checkState())
+        document.removeEventListener("keydown", ssspTree.logKey)
     }
 }
 

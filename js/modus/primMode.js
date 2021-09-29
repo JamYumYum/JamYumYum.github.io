@@ -1,6 +1,7 @@
 import * as Algo from '../algo.js';
 import * as Vector from '../2dVector.js'
 import { customEvent } from '../events/customEvent.js';
+import { nodeNameMap } from '../tools/nodeNameMap.js';
 const primMode = {
     ID : "prim",
     graph : undefined,
@@ -20,11 +21,11 @@ const primMode = {
     sim2 : undefined,
     width : 1200,
     height : 700,
-    nodeR1 : 20,
-    nodeR2 : 24,
+    nodeR1 : 28,
+    nodeR2 : 32,
     nodeColor : "white",
     nodeSelectedColor : "#4845ff",
-    nodeBorderWidth : 4,
+    nodeBorderWidth : 2,
     nodeBorderColor : "#e7e7e7",
     textSize : 15,
     lineSelectedColor : "#fc0000",
@@ -33,7 +34,7 @@ const primMode = {
     lineUnhoverColor : "#fff130",
     safeEdgeColor : "#fff130",
     lineUnhoverOpacity : 0.25,
-    clickboxSize : 15,
+    clickboxSize : 20,
     edgeTextOffset : 15,
     animationDuration : 300,
     edgeSelection : [],
@@ -42,11 +43,14 @@ const primMode = {
     startVertex : 0,
     selectedSet : [],
     svg : undefined,
+    nameMap : undefined,
     freeze : false,
     setGraph : function(g){
         this.graph = g
         this.selection = []
         this.selectedSet = [this.startVertex]
+        this.nameMap = nodeNameMap
+        this.nameMap.map(this.graph.vertices)
     },
 
     denyInput : function(){
@@ -73,10 +77,14 @@ const primMode = {
 
     lineHover : function(v,name){
         //TODO
+        d3.selectAll("line.clickbox."+name).filter(d=> v.index===d.index)
+        .attr("opacity", 0.5)
     },
 
     lineUnhover : function(name){
         //TODO
+        d3.selectAll("line.clickbox."+name)
+        .attr("opacity", 0)
     },
     goodMove : function(){
         //TODO good move, if selected edge is a safe edge and has min weight
@@ -111,6 +119,16 @@ const primMode = {
                 }
                 document.dispatchEvent(customEvent.legalMove)
             }
+            else{
+                if((this.selectedSet.indexOf(e.source.name) < 0) && (this.selectedSet.indexOf(e.target.name) < 0) ){
+                    // illegal move, which would create a cycle
+                    document.dispatchEvent(customEvent.illegalMove)
+                }
+                else{
+                    // technically also illegal move, cannot be chosen , uncertain if safe edge
+                    document.dispatchEvent(customEvent.doNothing)
+                }
+            }
         })
         this.update()
         document.dispatchEvent(customEvent.edgeClicked)
@@ -136,6 +154,12 @@ const primMode = {
                     return this.lineNotSelectedColor
                 }
             }
+        })
+        //nodetext update
+        d3
+        .selectAll("text.node")
+        .text(d=> {
+            return this.nameMap.nameMap[d.name]
         })
         //edge weight text update
         d3
@@ -294,7 +318,7 @@ const primMode = {
         .classed(name,true)
         .attr("pointer-events", "none")
         .attr("text-anchor", "middle")
-        .style("font-family", "arial")
+        .style("font-family", "Comic Sans MS")
         .style("font-size", this.textSize)
         .style("font-weight", "bold")
         .style("fill", "black")
@@ -308,7 +332,7 @@ const primMode = {
         .classed(name,true)
         .attr("pointer-events", "none")
         .attr("text-anchor", "middle")
-        .style("font-family", "arial")
+        .style("font-family", "Comic Sans MS")
         .style("font-size", this.textSize)
         .style("font-weight", "bold")
     },

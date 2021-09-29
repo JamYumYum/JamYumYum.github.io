@@ -176,6 +176,8 @@ const mstSelectN = {
     exit : function(){
         //TODO cleanup UI, force directed graph, eventlisteners
         this.cleanup()
+        document.removeEventListener("legalMove", ()=> mstSelectN.checkState())
+        document.removeEventListener("keydown", mstSelectN.logKey)
     }
 
 }

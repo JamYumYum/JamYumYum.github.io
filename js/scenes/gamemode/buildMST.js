@@ -26,7 +26,7 @@ const buildMST = {
         this.mode = undirectedMode
         this.mode.setGraph(this.graph)
         this.mode.initiateSimulation(this.name1,this.svg1,this.sim1)
-        
+        console.log(this.primData)
         this.generateGame()
         // TODO move eventlistener to selectMode
         document.addEventListener("legalMove", ()=> buildMST.checkState())
@@ -142,6 +142,8 @@ const buildMST = {
     exit : function(){
         //TODO cleanup UI, force directed graph, eventlisteners
         this.cleanup()
+        document.removeEventListener("legalMove", ()=> buildMST.checkState())
+        document.removeEventListener("keydown", buildMST.logKey)
     }
 }
 

@@ -22,53 +22,10 @@ let graph;
 
 
 function main(){
-    //graph = G.exgraph();
-    graph = G.mstGraph();
-    //initializeGraph();
-    let graph2 = G.mstGraph();
-    console.log(Algo.prim(graph, 0));
-    console.log(Algo.kruskal(graph));
-    console.log(Algo.dijkstra(graph,0));
-
-    //initiateSimulation("svg1", svg1,sim1);
-    //graph = G.mstGraph();
-    //initiateSimulation("svg2", svg2,sim2);
-    //clearSimulation();
-    //directedGraphMode();
-    Algo.initValue(graph, 0)
-    Algo.initValue(graph2, 0)
-    //updateEllipse()
-    //updatePolygon()
-    /*
-    let simOnline = new Promise(resolve=>{
-      initiateSimulation("svg1", svg1,sim1);
-      updateLine()
-      updateEllipse()
-      updatePolygon()
-      setTimeout(resolve, 0)
-    }).then((v)=>{
-      
-      updateText()
-    })
-    MainUI.test()
-    */
-    //interactiveGraph.setMode(directedMode)
-    //interactiveGraph.setMode(undirectedMode)
-    //interactiveGraph.setMode(kruskalMode)
-    //interactiveGraph.setMode(primMode)
-    //interactiveGraph.setGraph(graph)
-    //testMode.setGraph(graph2)
-    //interactiveGraph.initiateSimulation("svg1", svg1,sim1)
-    //testMode.initiateSimulation("svg2",svg2,sim2)
-    //setTimeout(()=>{interactiveGraph.denyInput()}, 3000)
-    //setTimeout(()=>{interactiveGraph.reset()}, 6000)
-    //setTimeout(()=>{testMode.reset()}, 6000)
-    //let interactiveG = new InteractiveGraph(kruskalMode,graph,"svg1")
-    //interactiveG.initiateSimulation()
     //mstSelectN.start()
     //vsDijkstra.start()
-    //buildMST.start()
-    ssspTree.start()
+    buildMST.start()
+    //ssspTree.start()
 }
 
 window.onload = main;
