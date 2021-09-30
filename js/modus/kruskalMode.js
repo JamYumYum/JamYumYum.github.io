@@ -41,8 +41,7 @@ const kruskalMode = {
     clickboxSize : 20,
     edgeTextOffset : 15,
     animationDuration : 300,
-    edgeSelection : [],
-    directG : true,
+    ignore : [],
     selection : [],
     colors : undefined,
     forest: undefined,
@@ -56,6 +55,10 @@ const kruskalMode = {
         this.forest = new UnionFind(this.graph.vertices)
         this.nameMap = nodeNameMap
         this.nameMap.map(this.graph.vertices)
+        this.ignore = []
+        for(let i = 0; i<this.graph.edges.length;i++){
+            this.ignore.push(false)
+        }
     },
 
     denyInput : function(){
@@ -69,6 +72,9 @@ const kruskalMode = {
     reset : function(){
         this.selection = []
         this.forest.reset()
+        for(let i = 0; i<this.ignore.length; i++){
+            this.ignore[i] = false
+        }
         this.update()
     },
 
@@ -109,6 +115,9 @@ const kruskalMode = {
             if(this.selection.indexOf(d) < 0){
                 if(!this.forest.union(d.source.name, d.target.name)){
                     //illegal edge selection click, would create cycle
+                    if(!this.ignore[d.index]){
+                        this.ignore[d.index] = true
+                    }
                     document.dispatchEvent(customEvent.doNothing)
                     document.dispatchEvent(customEvent.illegalMove)
                     console.log("illegal")
@@ -138,6 +147,15 @@ const kruskalMode = {
                 return this.colors[this.forest.find(e.source.name)]
             }
         })
+        .attr("opacity", e =>{
+            if(this.ignore[e.index] && (this.forest.find(e.source.name) == this.forest.find(e.target.name))){
+                return 0.25
+            }
+            else{
+                this.ignore[e.index] = false
+                return 1
+            }
+        })
         //nodename update
         d3
         .selectAll("text.name."+this.svg)
@@ -161,6 +179,15 @@ const kruskalMode = {
             }
             else{
                 return this.colors[this.forest.find(e.source.name)]
+            }
+        })
+        .attr("opacity", e =>{
+            if(this.ignore[e.index] && (this.forest.find(e.source.name) == this.forest.find(e.target.name))){
+                return 0.25
+            }
+            else{
+                this.ignore[e.index] = false
+                return 1
             }
         })
         //nodeColor
@@ -341,6 +368,8 @@ const kruskalMode = {
                 this.posCalc()
         })
         ;
+        this.sim1 = sim
+        
         this.draw(name,field,sim);
         //hide on load
         this.update()
