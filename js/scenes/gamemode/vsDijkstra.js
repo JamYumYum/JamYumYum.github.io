@@ -2,6 +2,8 @@ import { directedMode } from "../../modus/directedMode.js";
 import { vsDijkstraGraph } from "../../modus/vsDijkstraGraph.js";
 import * as A from '../../algo.js';
 import * as G from '../../graphGenerator.js';
+import { sceneManager } from "../sceneManager.js";
+import { mainMenu } from "../mainMenu.js";
 
 const vsDijkstra = {
     graph1 : undefined,
@@ -18,8 +20,11 @@ const vsDijkstra = {
         //initiate 2 force simulations
         this.restart()
 
-        document.addEventListener("legalMove", ()=> vsDijkstra.checkState())
-        document.addEventListener("keydown", vsDijkstra.logKey.bind(this))
+        document.addEventListener("legalMove", vsDijkstra.ncheckState)
+        document.addEventListener("keydown", vsDijkstra.nlogKey)
+    },
+    nlogKey : function(e){
+        vsDijkstra.logKey(e)
     },
     logKey : function(e){
         console.log(e)
@@ -32,6 +37,10 @@ const vsDijkstra = {
                 break
             case "KeyQ":
                 this.restart()
+                break
+            case "Escape":
+                sceneManager.enterQueue(mainMenu)
+                sceneManager.nextScene()
                 break
         }
     },
@@ -79,6 +88,9 @@ const vsDijkstra = {
         //TODO called when both have no more tense edges
         console.log("draw")
     },
+    ncheckState : function(){
+        vsDijkstra.checkState()
+    },
     checkState : function(){
         //called after every move, checking if someone is done(win/lose), increment clicks
         vsDijkstraGraph.dijkstraClick(this.totalRelaxations)
@@ -108,8 +120,8 @@ const vsDijkstra = {
         //TODO cleanup all UI elements, forcedirected graph
         directedMode.cleanup()
         vsDijkstraGraph.cleanup()
-        document.removeEventListener("legalMove", ()=> vsDijkstra.checkState())
-        document.removeEventListener("keydown", vsDijkstra.logKey)
+        document.removeEventListener("legalMove", vsDijkstra.ncheckState)
+        document.removeEventListener("keydown", vsDijkstra.nlogKey)
     }
 }
 

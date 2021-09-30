@@ -37,8 +37,7 @@ const primMode = {
     clickboxSize : 20,
     edgeTextOffset : 15,
     animationDuration : 300,
-    edgeSelection : [],
-    directG : true,
+    ignore : [],
     selection : [],
     startVertex : 0,
     selectedSet : [],
@@ -51,6 +50,10 @@ const primMode = {
         this.selectedSet = [this.startVertex]
         this.nameMap = nodeNameMap
         this.nameMap.map(this.graph.vertices)
+        this.ignore = []
+        for(let i = 0; i<this.graph.edges.length;i++){
+            this.ignore.push(false)
+        }
     },
 
     denyInput : function(){
@@ -64,6 +67,9 @@ const primMode = {
     reset : function(){
         this.selection = []
         this.selectedSet = [this.startVertex]
+        for(let i = 0; i<this.ignore.length; i++){
+            this.ignore[i] = false
+        }
         this.update()
     },
 
@@ -71,6 +77,7 @@ const primMode = {
         if(this.selection.length != 0){
             this.selection.pop()
             this.selectedSet.pop()
+            
             this.update()
         }
     },
@@ -120,8 +127,11 @@ const primMode = {
                 document.dispatchEvent(customEvent.legalMove)
             }
             else{
-                if((this.selectedSet.indexOf(e.source.name) < 0) && (this.selectedSet.indexOf(e.target.name) < 0) ){
+                if(!(this.selectedSet.indexOf(e.source.name) < 0) && !(this.selectedSet.indexOf(e.target.name) < 0) ){
                     // illegal move, which would create a cycle
+                    if(!this.ignore[e.index]){
+                        this.ignore[e.index] = true
+                    }
                     document.dispatchEvent(customEvent.illegalMove)
                 }
                 else{
@@ -153,6 +163,15 @@ const primMode = {
                 else{
                     return this.lineNotSelectedColor
                 }
+            }
+        })
+        .attr("opacity", e =>{
+            if(this.ignore[e.index] && !(this.selectedSet.indexOf(e.source.name) < 0) && !(this.selectedSet.indexOf(e.target.name) < 0)){
+                return 0.25
+            }
+            else{
+                this.ignore[e.index] = false
+                return 1
             }
         })
         //nodetext update
@@ -189,6 +208,15 @@ const primMode = {
             else{
                 //source xor target in S
                 return this.safeEdgeColor
+            }
+        })
+        .attr("opacity", e =>{
+            if(this.ignore[e.index] && !(this.selectedSet.indexOf(e.source.name) < 0) && !(this.selectedSet.indexOf(e.target.name) < 0)){
+                return 0.25
+            }
+            else{
+                this.ignore[e.index] = false
+                return 1
             }
         })
         //nodeColor
@@ -357,6 +385,8 @@ const primMode = {
                 this.posCalc()
         })
         ;
+        this.sim1 = sim
+       
         this.draw(name,field,sim);
         //hide on load
         this.update()

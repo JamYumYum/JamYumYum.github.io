@@ -16,6 +16,8 @@ import {mstSelectN} from './scenes/gamemode/mstSelectN.js'
 import {vsDijkstra} from './scenes/gamemode/vsDijkstra.js'
 import { buildMST } from './scenes/gamemode/buildMST.js';
 import { ssspTree } from './scenes/gamemode/ssspTree.js';
+import { mainMenu } from './scenes/mainMenu.js';
+import { sceneManager } from './scenes/sceneManager.js';
 
 let graph;
 
@@ -24,8 +26,10 @@ let graph;
 function main(){
     //mstSelectN.start()
     //vsDijkstra.start()
-    buildMST.start()
+    //buildMST.start()
     //ssspTree.start()
+    sceneManager.enterQueue(mainMenu)
+    sceneManager.nextScene()
 }
 
 window.onload = main;

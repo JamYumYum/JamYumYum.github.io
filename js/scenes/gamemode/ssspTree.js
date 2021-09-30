@@ -1,6 +1,8 @@
 import { directedMode } from "../../modus/directedMode.js";
 import * as A from '../../algo.js';
 import * as G from '../../graphGenerator.js';
+import { sceneManager } from "../sceneManager.js";
+import { mainMenu } from "../mainMenu.js";
 
 const ssspTree = {
     graph1 : undefined,
@@ -12,8 +14,11 @@ const ssspTree = {
         //initiate 2 force simulations
         this.restart()
 
-        document.addEventListener("legalMove", ()=> ssspTree.checkState())
-        document.addEventListener("keydown", ssspTree.logKey.bind(this))
+        document.addEventListener("legalMove", ssspTree.ncheckState)
+        document.addEventListener("keydown", ssspTree.nlogKey)
+    },
+    nlogKey : function(e){
+        ssspTree.logKey(e)
     },
     logKey : function(e){
         console.log(e)
@@ -26,6 +31,10 @@ const ssspTree = {
                 break
             case "KeyQ":
                 this.restart()
+                break
+            case "Escape":
+                sceneManager.enterQueue(mainMenu)
+                sceneManager.nextScene()
                 break
         }
     },
@@ -56,6 +65,9 @@ const ssspTree = {
         //TODO called when player has no more tense edges
         console.log("win"+this.totalRelaxations)
     },
+    ncheckState : function(){
+        mstSelectN.checkState()
+    },
     checkState : function(){
         this.totalRelaxations += 1
         if(directedMode.totalTenseEdges == 0){
@@ -65,8 +77,8 @@ const ssspTree = {
     exit : function(){
         //TODO cleanup all UI elements, forcedirected graph
         directedMode.cleanup()
-        document.removeEventListener("legalMove", ()=> ssspTree.checkState())
-        document.removeEventListener("keydown", ssspTree.logKey)
+        document.removeEventListener("legalMove", ssspTree.ncheckState)
+        document.removeEventListener("keydown", ssspTree.nlogKey)
     }
 }
 

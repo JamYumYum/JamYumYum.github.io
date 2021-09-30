@@ -3,6 +3,8 @@ import { kruskalMode } from "../../modus/kruskalMode.js"
 import { undirectedMode } from "../../modus/undirectedMode.js"
 import * as G from '../../graphGenerator.js';
 import * as A from '../../algo.js'
+import { sceneManager } from "../sceneManager.js";
+import { mainMenu } from "../mainMenu.js";
 const mstSelectN = {
     mode : undefined,
     graph : undefined,
@@ -33,9 +35,11 @@ const mstSelectN = {
         
         this.generateGame()
         // TODO move eventlistener to selectMode
-        document.addEventListener("edgeClicked", this.test)
-        document.addEventListener("legalMove", ()=> mstSelectN.checkState())
-        document.addEventListener("keydown", mstSelectN.logKey.bind(this))
+        document.addEventListener("legalMove", mstSelectN.ncheckState)
+        document.addEventListener("keydown", mstSelectN.nlogKey)
+    },
+    nlogKey : function(e){
+        mstSelectN.logKey(e)
     },
     logKey : function(e){
         console.log(e)
@@ -54,6 +58,10 @@ const mstSelectN = {
                 break
             case "Digit2":
                 this.selectMode(kruskalMode)
+                break
+            case "Escape":
+                sceneManager.enterQueue(mainMenu)
+                sceneManager.nextScene()
                 break
         }
     },
@@ -139,6 +147,9 @@ const mstSelectN = {
         //TODO
         console.log("lose")
     },
+    ncheckState : function(){
+        mstSelectN.checkState()
+    },
     checkState : function(){
         // on click on a safe edge 
         if(this.freeze){
@@ -176,8 +187,8 @@ const mstSelectN = {
     exit : function(){
         //TODO cleanup UI, force directed graph, eventlisteners
         this.cleanup()
-        document.removeEventListener("legalMove", ()=> mstSelectN.checkState())
-        document.removeEventListener("keydown", mstSelectN.logKey)
+        document.removeEventListener("legalMove", mstSelectN.ncheckState)
+        document.removeEventListener("keydown", mstSelectN.nlogKey)
     }
 
 }

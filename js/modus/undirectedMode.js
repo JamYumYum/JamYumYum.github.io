@@ -1,6 +1,7 @@
 import * as Algo from '../algo.js';
 import * as Vector from '../2dVector.js'
 import * as Color from '../tools/colorGenerator.js'
+import UnionFind from '../ds/unionFind.js';
 import { customEvent } from '../events/customEvent.js';
 import { nodeNameMap } from '../tools/nodeNameMap.js';
 const undirectedMode = {
@@ -38,17 +39,22 @@ const undirectedMode = {
     clickboxSize : 20,
     edgeTextOffset : 15,
     animationDuration : 300,
-    edgeSelection : [],
-    directG : true,
+    ignore : [],
     selection : [],
+    forest: undefined,
     svg : undefined,
     nameMap : undefined,
     freeze : false,
     setGraph : function(g){
         this.graph = g
         this.selection = []
+        this.forest = new UnionFind(this.graph.vertices)
         this.nameMap = nodeNameMap
         this.nameMap.map(this.graph.vertices)
+        this.ignore = []
+        for(let i = 0; i<this.graph.edges.length;i++){
+            this.ignore.push(false)
+        }
     },
 
     denyInput : function(){
@@ -61,11 +67,16 @@ const undirectedMode = {
 
     reset : function(){
         this.selection = []
+        this.forest.reset()
+        for(let i = 0; i<this.ignore.length; i++){
+            this.ignore[i] = false
+        }
         this.update()
     },
 
     undo : function(){
         this.selection.pop()
+        this.forest.undo()
         this.update()
     },
 
@@ -100,19 +111,22 @@ const undirectedMode = {
         .transition()
         .duration(this.animationDuration)
         .attr("stroke", d=>{
-            if(this.selection.indexOf(d) < 0) this.selection.push(d)
+            if(this.selection.indexOf(d) < 0){
+                if(!this.forest.union(d.source.name, d.target.name)){
+                    //illegal edge selection click, would create cycle
+                    if(!this.ignore[d.index]){
+                        this.ignore[d.index] = true
+                    }
+                    document.dispatchEvent(customEvent.doNothing)
+                    document.dispatchEvent(customEvent.illegalMove)
+                    console.log("illegal")
+                }
+                else{
+                    this.selection.push(d)
+                    document.dispatchEvent(customEvent.legalMove)
+                }
+            }
             console.log(this.selection)
-            if(!Algo.checkCycle(this.selection)){
-                document.dispatchEvent(customEvent.legalMove)
-                return this.lineSelectedColor
-            }
-            else{
-                // would create cycle => illegal move
-                this.selection.pop()
-                document.dispatchEvent(customEvent.doNothing)
-                document.dispatchEvent(customEvent.illegalMove)
-                return this.lineHoverColor
-            }
         })
         this.update()
     },
@@ -123,6 +137,15 @@ const undirectedMode = {
         .transition()
         .duration(this.animationDuration)
         .attr("stroke", e=>{if(this.selection.indexOf(e) < 0){return this.lineUnhoverColor} else{return this.lineSelectedColor}})
+        .attr("opacity", e =>{
+            if(this.ignore[e.index] && (this.forest.find(e.source.name) == this.forest.find(e.target.name))){
+                return 0.25
+            }
+            else{
+                this.ignore[e.index] = false
+                return 1
+            }
+        })
         //nodetext update
         d3
         .selectAll("text.node")
@@ -137,6 +160,15 @@ const undirectedMode = {
         .transition()
         .duration(this.animationDuration)
         .style("fill", e=>{if(this.selection.indexOf(e) < 0){return this.lineUnhoverColor} else{return this.lineSelectedColor}})
+        .attr("opacity", e =>{
+            if(this.ignore[e.index] && (this.forest.find(e.source.name) == this.forest.find(e.target.name))){
+                return 0.25
+            }
+            else{
+                this.ignore[e.index] = false
+                return 1
+            }
+        })
     },
 
     posCalc : function(){
@@ -290,6 +322,8 @@ const undirectedMode = {
                 this.posCalc()
         })
         ;
+        this.sim1 = sim
+        
         this.draw(name,field,sim);
         //hide on load
         this.update()

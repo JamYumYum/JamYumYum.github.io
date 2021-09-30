@@ -1,8 +1,10 @@
 import { primMode } from "../../modus/primMode.js"
 import { kruskalMode } from "../../modus/kruskalMode.js"
 import { undirectedMode } from "../../modus/undirectedMode.js"
+import { sceneManager } from "../sceneManager.js";
 import * as G from '../../graphGenerator.js';
 import * as A from '../../algo.js'
+import { mainMenu } from "../mainMenu.js";
 
 const buildMST = {
     mode : undefined,
@@ -29,8 +31,11 @@ const buildMST = {
         console.log(this.primData)
         this.generateGame()
         // TODO move eventlistener to selectMode
-        document.addEventListener("legalMove", ()=> buildMST.checkState())
-        document.addEventListener("keydown", buildMST.logKey.bind(this))
+        document.addEventListener("legalMove", buildMST.ncheckState)
+        document.addEventListener("keydown", buildMST.nlogKey)
+    },
+    nlogKey : function(e){
+        buildMST.logKey(e)
     },
     logKey : function(e){
         console.log(e)
@@ -52,6 +57,10 @@ const buildMST = {
                 break
             case "Digit3":
                 this.selectMode(undirectedMode)
+                break
+            case "Escape":
+                sceneManager.enterQueue(mainMenu)
+                sceneManager.nextScene()
                 break
         }
     },
@@ -118,6 +127,9 @@ const buildMST = {
         //TODO
         console.log("lose")
     },
+    ncheckState : function(){
+        buildMST.checkState()
+    },
     checkState : function(){
         //TODO
         // on click on a safe edge 
@@ -142,8 +154,8 @@ const buildMST = {
     exit : function(){
         //TODO cleanup UI, force directed graph, eventlisteners
         this.cleanup()
-        document.removeEventListener("legalMove", ()=> buildMST.checkState())
-        document.removeEventListener("keydown", buildMST.logKey)
+        document.removeEventListener("legalMove", buildMST.ncheckState)
+        document.removeEventListener("keydown", buildMST.nlogKey)
     }
 }
 

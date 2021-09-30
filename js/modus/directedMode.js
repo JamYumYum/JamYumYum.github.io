@@ -443,6 +443,7 @@ const directedMode = {
                 }
             })
         ;
+        this.sim1 = sim
         sim.velocityDecay(0.1)
         sim.tick(500)
         sim.velocityDecay(0.3)
