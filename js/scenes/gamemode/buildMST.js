@@ -5,6 +5,7 @@ import { sceneManager } from "../sceneManager.js";
 import * as G from '../../graphGenerator.js';
 import * as A from '../../algo.js'
 import { mainMenu } from "../mainMenu.js";
+import { svg0UI } from "../../UI/svg0.js";
 
 const buildMST = {
     mode : undefined,
@@ -20,19 +21,35 @@ const buildMST = {
     edgeSelection : [],
     totalMoves : undefined,
     freeze : false,
+    //UI content
+    infoTextContent : undefined,
+    inspectorContent : undefined,
+    stateContent : undefined,
     start : function(){
         //TODO selection for visual help (prim/kruskal/none), setting up interactive force directed graph
+        this.mode = undirectedMode
+        svg0UI.drawUI(this.mode)
         this.graph = G.mstGraph() // set graph TODO? change to better graph
         this.primData = A.prim(this.graph, 0)
         this.kruskalData = A.kruskal(this.graph)
-        this.mode = undirectedMode
         this.mode.setGraph(this.graph)
         this.mode.initiateSimulation(this.name1,this.svg1,this.sim1)
         console.log(this.primData)
         this.generateGame()
+        console.log(d3.select("svg"))
+        console.log(document.getElementById("svg0"))
         // TODO move eventlistener to selectMode
         document.addEventListener("legalMove", buildMST.ncheckState)
         document.addEventListener("keydown", buildMST.nlogKey)
+        document.addEventListener("illegalMove", buildMST.nIllegalMessage)
+        document.addEventListener("doNothing", buildMST.nDoNothing)
+        window.addEventListener("resize", this.nrecenter)
+
+        //fetch("../../../text/testText.txt")
+        //.then(response => response.text())
+        //.then(text => d3.select("#infoText").html(text))
+        d3.select("#infoText").html("Click on Edges in order to add them to your tree. Try to build a MST!")
+        
     },
     nlogKey : function(e){
         buildMST.logKey(e)
@@ -48,15 +65,19 @@ const buildMST = {
                 break
             case "KeyQ":
                 this.restart()
+                d3.select("#infoText").html("Created new Graph!")
                 break
             case "Digit1":
                 this.selectMode(primMode)
+                d3.select("#infoText").html("Showing Safe Edges.")
                 break
             case "Digit2":
                 this.selectMode(kruskalMode)
+                d3.select("#infoText").html("Showing Color support.")
                 break
             case "Digit3":
                 this.selectMode(undirectedMode)
+                d3.select("#infoText").html("No support enabled.")
                 break
             case "Escape":
                 sceneManager.enterQueue(mainMenu)
@@ -111,12 +132,17 @@ const buildMST = {
         this.mode.reset()
         this.edgeSelection = []
         this.totalWeight = 0
+        d3.select("#infoText").html("Initial state.")
     },
     undo(){
         if(this.edgeSelection.length != 0){
             this.mode.undo()
             let e = this.edgeSelection.pop()
             this.totalWeight -= e.key
+            d3.select("#infoText").html("Undo 1 move.")
+        }
+        else{
+            d3.select("#infoText").html("Initial state.")
         }
     },
     win : function(){
@@ -133,6 +159,7 @@ const buildMST = {
     checkState : function(){
         //TODO
         // on click on a safe edge 
+        this.legalMessage()
         if(this.freeze){
             return
         }
@@ -151,12 +178,43 @@ const buildMST = {
         d3.selectAll("svg."+this.name1)
         .remove()
     },
+    nrecenter : function(){
+        buildMST.mode.recenter()
+    },
     exit : function(){
-        //TODO cleanup UI, force directed graph, eventlisteners
+        //cleanup UI, force directed graph, eventlisteners
         this.cleanup()
+        svg0UI.cleanupUI()
         document.removeEventListener("legalMove", buildMST.ncheckState)
         document.removeEventListener("keydown", buildMST.nlogKey)
+        document.removeEventListener("illegalMove", buildMST.nIllegalMessage)
+        document.removeEventListener("doNothing", buildMST.nDoNothing)
+        window.removeEventListener("resize", this.nrecenter)
+    },
+    //messages
+    legalMessage : function(){
+        let source = buildMST.mode.nameMap.nameMap[buildMST.mode.currentEdge.source.index]
+        let target = buildMST.mode.nameMap.nameMap[buildMST.mode.currentEdge.target.index]
+        d3.select("#infoText").html(`<SPAN STYLE="text-decoration:overline; font-weight:bold">
+        ${source}${target}
+        </SPAN> added to your tree.`)
+    },
+    nDoNothing : function(){
+        let source = buildMST.mode.nameMap.nameMap[buildMST.mode.currentEdge.source.index]
+        let target = buildMST.mode.nameMap.nameMap[buildMST.mode.currentEdge.target.index]
+        d3.select("#infoText").html(`We don't know, if 
+        <SPAN STYLE="text-decoration:overline; font-weight:bold">
+        ${source}${target}
+        </SPAN> is a safe edge!`)
+    },
+    nIllegalMessage : function(){
+        let source = buildMST.mode.nameMap.nameMap[buildMST.mode.currentEdge.source.index]
+        let target = buildMST.mode.nameMap.nameMap[buildMST.mode.currentEdge.target.index]
+        d3.select("#infoText").html(`Selecting <SPAN STYLE="text-decoration:overline; font-weight:bold">
+        ${source}${target}
+        </SPAN> would create a cycle!`)
     }
+
 }
 
 export {buildMST}

@@ -340,6 +340,7 @@ const directedMode = {
         .attr("stroke-width", this.nodeBorderWidth)
         .attr("stroke", this.nodeBorderColor)
         .on("mouseover", v=>{
+            if(this.freeze){return}
             d3
             .selectAll("circle.graphNode."+name)
             .filter(d=> v.index === d.index)
@@ -349,6 +350,7 @@ const directedMode = {
             .attr("r", this.nodeR2)
         })
         .on("mouseout", v=>{
+            if(this.freeze){return}
             d3
             .selectAll("circle.graphNode."+name)
             .filter(d=> v.index === d.index)
@@ -421,19 +423,30 @@ const directedMode = {
     initiateSimulation : async function(name, field,sim){
         this.svg = name
         d3
-        .select("body")
+        .select("#"+name)
             .append("svg")
             .attr("class", name)
-            .attr("width", this.width)
-            .attr("height", this.height);
+            
             
         field = d3.select("svg."+name);
+
+        let element = document.getElementById(name)
+        let style = window.getComputedStyle(element)
+        this.width = parseInt(style.getPropertyValue("width"))
+        this.height = parseInt(style.getPropertyValue("height"))
+
+        field
+        .attr("width", this.width)
+        .attr("height", this.height)
+
         
         sim = d3.forceSimulation(this.graph.vertices)
             //.force("link", d3.forceLink(graph.edges).distance(100).strength(2))
             .force("link", d3.forceLink(this.graph.edges).distance(50).strength(0.9))
             .force("charge", d3.forceManyBody().strength(-400))
             .force("center", d3.forceCenter(this.width/2,this.height/2))
+            .force('xAxis', d3.forceX(this.width / 2).strength(0.1))
+            .force('yAxis', d3.forceY(this.width / 2).strength(0.1))
             .force('collide', d3.forceCollide(50).iterations(6))
             .on('tick', () => {
                 this.posCalc()
@@ -447,18 +460,29 @@ const directedMode = {
         sim.velocityDecay(0.1)
         sim.tick(500)
         sim.velocityDecay(0.3)
+        this.freeze = true
+        setTimeout(()=>{this.freeze = false}, this.animationDuration)
         this.draw(name,field,sim);
         
-        
-        if(!this.startup){
-            console.log("flag2")
-            this.update()
-        }
     },
-    test : async function(){
-        await(this.posCalc()).then(this.update())
+    recenter: function(){
+
+        let element = document.getElementById(this.svg)
+        let style = window.getComputedStyle(element)
+        this.width = parseInt(style.getPropertyValue("width"))
+        this.height = parseInt(style.getPropertyValue("height"))
+
+        this.sim1.force("center", d3.forceCenter(this.width/2,this.height/2))
+        .force('xAxis', d3.forceX(this.width / 2).strength(0.1))
+        .force('yAxis', d3.forceY(this.width / 2).strength(0.1))
+        .alpha(1).restart()
+
+        d3.select("svg."+this.svg)
+        .attr("width", this.width)
+        .attr("height", this.height)
     }
 }
+
 
 export {directedMode}
 //TODO animation tense edge & edge text position

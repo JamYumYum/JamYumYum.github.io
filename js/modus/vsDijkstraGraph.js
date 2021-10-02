@@ -18,7 +18,7 @@ const vsDijkstraGraph = {
     svg2 : undefined,
     sim1 : undefined,
     sim2 : undefined,
-    width : 800,
+    width : 1200,
     height : 700,
     nodeR1 : 28,
     nodeR2 : 32,
@@ -330,6 +330,7 @@ const vsDijkstraGraph = {
         .attr("stroke-width", this.nodeBorderWidth)
         .attr("stroke", this.nodeBorderColor)
         .on("mouseover", v=>{
+            if(this.freeze){return}
             d3
             .selectAll("circle.graphNode."+name)
             .filter(d=> v.index === d.index)
@@ -339,6 +340,7 @@ const vsDijkstraGraph = {
             .attr("r", this.nodeR2)
         })
         .on("mouseout", v=>{
+            if(this.freeze){return}
             d3
             .selectAll("circle.graphNode."+name)
             .filter(d=> v.index === d.index)
@@ -411,13 +413,22 @@ const vsDijkstraGraph = {
     initiateSimulation : async function(name, field,sim){
         this.svg = name
         d3
-        .select("body")
+        .select("#"+name)
             .append("svg")
             .attr("class", name)
-            .attr("width", this.width)
-            .attr("height", this.height);
+            
             
         field = d3.select("svg."+name);
+
+        let element = document.getElementById(name)
+        let style = window.getComputedStyle(element)
+        this.width = parseInt(style.getPropertyValue("width"))
+        this.height = parseInt(style.getPropertyValue("height"))
+
+        field
+        .attr("width", this.width)
+        .attr("height", this.height)
+
         sim = d3.forceSimulation(this.graph.vertices)
             //.force("link", d3.forceLink(graph.edges).distance(100).strength(2))
             .force("link", d3.forceLink(this.graph.edges).distance(50).strength(0.9))
@@ -436,11 +447,26 @@ const vsDijkstraGraph = {
         sim.velocityDecay(0.1)
         sim.tick(500)
         sim.velocityDecay(0.3)
+        this.freeze = true
+        setTimeout(()=>{this.freeze = false}, this.animationDuration)
         this.draw(name,field,sim);
-        //TODO seperate for 2 simulations
-        if(!this.startup){
-            this.update()
-        }
+        
+    },
+    recenter: function(){
+
+        let element = document.getElementById(this.svg)
+        let style = window.getComputedStyle(element)
+        this.width = parseInt(style.getPropertyValue("width"))
+        this.height = parseInt(style.getPropertyValue("height"))
+
+        this.sim1.force("center", d3.forceCenter(this.width/2,this.height/2))
+        .force('xAxis', d3.forceX(this.width / 2).strength(0.1))
+        .force('yAxis', d3.forceY(this.width / 2).strength(0.1))
+        .alpha(1).restart()
+
+        d3.select("svg."+this.svg)
+        .attr("width", this.width)
+        .attr("height", this.height)
     }
 }
 

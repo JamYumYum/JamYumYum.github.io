@@ -5,6 +5,7 @@ import * as G from '../../graphGenerator.js';
 import * as A from '../../algo.js'
 import { sceneManager } from "../sceneManager.js";
 import { mainMenu } from "../mainMenu.js";
+import { svg0UI } from "../../UI/svg0.js";
 const mstSelectN = {
     mode : undefined,
     graph : undefined,
@@ -26,10 +27,11 @@ const mstSelectN = {
     
     start : function(){
         //TODO selection for visual help (prim/kruskal/none), setting up interactive force directed graph
+        this.mode = primMode
+        svg0UI.drawUI(this.mode)
         this.graph = G.mstGraph() // set graph TODO? change to better graph
         this.primData = A.prim(this.graph, 0)
         this.kruskalData = A.kruskal(this.graph)
-        this.mode = primMode
         this.mode.setGraph(this.graph)
         this.mode.initiateSimulation(this.name1,this.svg1,this.sim1)
         
@@ -37,6 +39,7 @@ const mstSelectN = {
         // TODO move eventlistener to selectMode
         document.addEventListener("legalMove", mstSelectN.ncheckState)
         document.addEventListener("keydown", mstSelectN.nlogKey)
+        window.addEventListener("resize", this.nrecenter)
     },
     nlogKey : function(e){
         mstSelectN.logKey(e)
@@ -80,6 +83,7 @@ const mstSelectN = {
     },
     drawUI : function(){
         //TODO draw UI, link values(movesleft), add information log
+        
     },
     selectModeUI : function(){
         //TODO draw UI for mode selection(prim/kruskal/none), add eventlisteners
@@ -184,11 +188,16 @@ const mstSelectN = {
         d3.selectAll("svg."+this.name1)
         .remove()
     },
+    nrecenter : function(){
+        mstSelectN.mode.recenter()
+    },
     exit : function(){
         //TODO cleanup UI, force directed graph, eventlisteners
         this.cleanup()
+        svg0UI.cleanupUI()
         document.removeEventListener("legalMove", mstSelectN.ncheckState)
         document.removeEventListener("keydown", mstSelectN.nlogKey)
+        window.removeEventListener("resize", this.nrecenter)
     }
 
 }

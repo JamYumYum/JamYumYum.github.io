@@ -38,16 +38,18 @@ const kruskalMode = {
     lineHoverColor : "#fc0000",
     lineUnhoverColor : "white",
     lineUnhoverOpacity : 0.25,
-    clickboxSize : 20,
+    clickboxSize : 20, // hover line and extra easy clickable and invisible
     edgeTextOffset : 15,
-    animationDuration : 300,
-    ignore : [],
-    selection : [],
-    colors : undefined,
-    forest: undefined,
-    svg : undefined,
-    nameMap : undefined,
-    freeze : false,
+    animationDuration : 300, // transition duration
+    ignore : [],   // when edge source and target cannot union, then it will be marked here, reset if union possible
+    selection : [], // selected edges
+    colors : undefined, // different color for each node tag
+    forest: undefined, // union find datastructure
+    svg : undefined,  // identifier for svg element and its parent id
+    nameMap : undefined, // mapping letters to node index as names
+    currentEdge : undefined, //last clicked edge
+    currentNode : undefined, // last clicked node
+    freeze : false, // dont allow edge selections
     setGraph : function(g){
         this.graph = g
         this.colors = Color.getColorDiversity(g.vertices)
@@ -112,13 +114,13 @@ const kruskalMode = {
         d3.selectAll("line.graphEdge."+name)
         .filter(d=> v.index===d.index)
         .attr("stroke", d=>{
+            this.currentEdge = d
             if(this.selection.indexOf(d) < 0){
                 if(!this.forest.union(d.source.name, d.target.name)){
                     //illegal edge selection click, would create cycle
                     if(!this.ignore[d.index]){
                         this.ignore[d.index] = true
                     }
-                    document.dispatchEvent(customEvent.doNothing)
                     document.dispatchEvent(customEvent.illegalMove)
                     console.log("illegal")
                 }
@@ -127,7 +129,8 @@ const kruskalMode = {
                     document.dispatchEvent(customEvent.legalMove)
                 }
             }
-            console.log(this.selection)
+            
+            console.log(this.currentEdge)
         })
         this.update()
         //TODO not done yet
@@ -270,6 +273,7 @@ const kruskalMode = {
         .attr("stroke-width", this.nodeBorderWidth)
         .attr("stroke", this.nodeBorderColor)
         .on("mouseover", v=>{
+            if(this.freeze){return}
             d3
             .selectAll("circle.graphNode."+name)
             .filter(d=> v.index === d.index)
@@ -279,6 +283,7 @@ const kruskalMode = {
             .attr("r", this.nodeR2)
         })
         .on("mouseout", v=>{
+            if(this.freeze){return}
             d3
             .selectAll("circle.graphNode."+name)
             .filter(d=> v.index === d.index)
@@ -287,6 +292,10 @@ const kruskalMode = {
             .duration(this.animationDuration)
             .attr("r", this.nodeR1)
             })
+        .on("mousedown", v=>{
+            this.currentNode = v
+            document.dispatchEvent(customEvent.nodeClicked)
+        })
         .call(
             d3
             .drag()
@@ -351,13 +360,22 @@ const kruskalMode = {
     initiateSimulation : async function(name, field,sim){
         this.svg = name
         d3
-        .select("body")
+        .select("#"+name)
             .append("svg")
             .attr("class", name)
-            .attr("width", this.width)
-            .attr("height", this.height);
+            
             
         field = d3.select("svg."+name);
+
+        let element = document.getElementById(name)
+        let style = window.getComputedStyle(element)
+        this.width = parseInt(style.getPropertyValue("width"))
+        this.height = parseInt(style.getPropertyValue("height"))
+
+        field
+        .attr("width", this.width)
+        .attr("height", this.height)
+            
         sim = d3.forceSimulation(this.graph.vertices)
             //.force("link", d3.forceLink(graph.edges).distance(100).strength(2))
             .force("link", d3.forceLink(this.graph.edges).distance(50).strength(0.9))
@@ -369,10 +387,27 @@ const kruskalMode = {
         })
         ;
         this.sim1 = sim
-        
+        this.freeze = true
+        setTimeout(()=>{this.freeze = false}, this.animationDuration)
         this.draw(name,field,sim);
         //hide on load
         this.update()
+    },
+    recenter: function(){
+
+        let element = document.getElementById(this.svg)
+        let style = window.getComputedStyle(element)
+        this.width = parseInt(style.getPropertyValue("width"))
+        this.height = parseInt(style.getPropertyValue("height"))
+
+        this.sim1.force("center", d3.forceCenter(this.width/2,this.height/2))
+        .force('xAxis', d3.forceX(this.width / 2).strength(0.1))
+        .force('yAxis', d3.forceY(this.width / 2).strength(0.1))
+        .alpha(1).restart()
+
+        d3.select("svg."+this.svg)
+        .attr("width", this.width)
+        .attr("height", this.height)
     }
 }
 

@@ -43,6 +43,8 @@ const primMode = {
     selectedSet : [],
     svg : undefined,
     nameMap : undefined,
+    currentEdge : undefined, //last clicked edge
+    currentNode : undefined, // last clicked node
     freeze : false,
     setGraph : function(g){
         this.graph = g
@@ -114,6 +116,7 @@ const primMode = {
         d3.selectAll("line.graphEdge."+name)
         .filter(d=> v.index===d.index)
         .attr("stroke", e=>{
+            this.currentEdge = e
             if(( (this.selectedSet.indexOf(e.source.name) < 0) || (this.selectedSet.indexOf(e.target.name) < 0) )
                 && (!(this.selectedSet.indexOf(e.source.name) < 0) || !(this.selectedSet.indexOf(e.target.name) < 0))){
                 //source xor target in selectedSet
@@ -301,6 +304,7 @@ const primMode = {
         .attr("stroke-width", this.nodeBorderWidth)
         .attr("stroke", this.nodeBorderColor)
         .on("mouseover", v=>{
+            if(this.freeze){return}
             d3
             .selectAll("circle.graphNode."+name)
             .filter(d=> v.index === d.index)
@@ -310,6 +314,7 @@ const primMode = {
             .attr("r", this.nodeR2)
         })
         .on("mouseout", v=>{
+            if(this.freeze){return}
             d3
             .selectAll("circle.graphNode."+name)
             .filter(d=> v.index === d.index)
@@ -318,6 +323,10 @@ const primMode = {
             .duration(this.animationDuration)
             .attr("r", this.nodeR1)
             })
+        .on("mousedown", v=>{
+            this.currentNode = v
+            document.dispatchEvent(customEvent.nodeClicked)
+        })
         .call(
             d3
             .drag()
@@ -368,13 +377,22 @@ const primMode = {
     initiateSimulation : async function(name, field,sim){
         this.svg = name
         d3
-        .select("body")
+        .select("#"+name)
             .append("svg")
             .attr("class", name)
-            .attr("width", this.width)
-            .attr("height", this.height);
+            
             
         field = d3.select("svg."+name);
+
+        let element = document.getElementById(name)
+        let style = window.getComputedStyle(element)
+        this.width = parseInt(style.getPropertyValue("width"))
+        this.height = parseInt(style.getPropertyValue("height"))
+
+        field
+        .attr("width", this.width)
+        .attr("height", this.height)
+
         sim = d3.forceSimulation(this.graph.vertices)
             //.force("link", d3.forceLink(graph.edges).distance(100).strength(2))
             .force("link", d3.forceLink(this.graph.edges).distance(50).strength(0.9))
@@ -386,10 +404,27 @@ const primMode = {
         })
         ;
         this.sim1 = sim
-       
+        this.freeze = true
+        setTimeout(()=>{this.freeze = false}, this.animationDuration)
         this.draw(name,field,sim);
         //hide on load
         this.update()
+    },
+    recenter: function(){
+
+        let element = document.getElementById(this.svg)
+        let style = window.getComputedStyle(element)
+        this.width = parseInt(style.getPropertyValue("width"))
+        this.height = parseInt(style.getPropertyValue("height"))
+
+        this.sim1.force("center", d3.forceCenter(this.width/2,this.height/2))
+        .force('xAxis', d3.forceX(this.width / 2).strength(0.1))
+        .force('yAxis', d3.forceY(this.width / 2).strength(0.1))
+        .alpha(1).restart()
+
+        d3.select("svg."+this.svg)
+        .attr("width", this.width)
+        .attr("height", this.height)
     }
 }
 

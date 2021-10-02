@@ -41,7 +41,85 @@ circle.graphNode2{
 }
 /*
 .svg0{
-    width: 50%;
-    height: 50%;
+
+   
 }
 */
+#grid1{
+    display: grid;
+    grid-template-columns: repeat(9, 1fr);
+    grid-template-rows: repeat(6, 1fr) ;
+    grid-gap: 0px;
+    width: 100vw;
+    height: 100vh;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+/*used by grid1, grid2 */
+#svg0{
+    grid-column: 1/7;
+    grid-row: 1/5;
+}
+#infoText{
+    grid-column: 1/5;
+    grid-row: 5/7;
+    background-color:#7c7c7c;
+    padding: 10px;
+    border: #202020 solid 5px;
+    font-size: 30px;
+    font-family: "Comic Sans MS";
+}
+#inspector{
+    grid-column: 5/7;
+    grid-row: 5/7;
+    background-color:#7c7c7c;
+    padding: 10px;
+    border: #202020 solid 5px;
+    font-size: 30px;
+    font-family: "Comic Sans MS";
+}
+#state{
+    grid-column: 7/10;
+    grid-row: 1/4;
+    background-color:#7c7c7c;
+    padding: 10px;
+    border: #202020 solid 5px;
+    font-size: 30px;
+    font-family: "Comic Sans MS";
+}
+#command{
+    grid-column: 7/10;
+    grid-row: 4;
+    background-color:#7c7c7c;
+    padding: 10px;
+    border: #202020 solid 5px;
+    font-size: 30px;
+    font-family: "Comic Sans MS";
+}
+#mode{
+    grid-column: 7/10;
+    grid-row: 5;
+    background-color:#7c7c7c;
+    padding: 10px;
+    border: #202020 solid 5px;
+    font-size: 30px;
+    font-family: "Comic Sans MS";
+}
+#extra{
+    grid-column: 7/10;
+    grid-row: 6;
+    background-color:#7c7c7c;
+    padding: 10px;
+    border: #202020 solid 5px;
+    font-size: 30px;
+    font-family: "Comic Sans MS";
+}
+/*used by  */
+.svg1{
+    background-color: #4d4d4d;
+}
+.svg2{
+    background-color: #202020;
+}
+

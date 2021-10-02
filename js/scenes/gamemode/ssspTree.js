@@ -3,19 +3,23 @@ import * as A from '../../algo.js';
 import * as G from '../../graphGenerator.js';
 import { sceneManager } from "../sceneManager.js";
 import { mainMenu } from "../mainMenu.js";
+import { svg0UI } from "../../UI/svg0.js";
 
 const ssspTree = {
-    graph1 : undefined,
-    svg1 : undefined,
-    sim1 : undefined,
-    name1 : "svg0",
-    totalRelaxations : 0,
+    mode : undefined,   //used mode
+    graph1 : undefined, //graph
+    svg1 : undefined, // svg element 
+    sim1 : undefined, // simulation
+    name1 : "svg0", // id for grid item and class name for svg
+    totalRelaxations : 0, // counter for edge relaxations
     start : function(){
-        //initiate 2 force simulations
+        this.mode = directedMode
+        svg0UI.drawUI(this.mode)
         this.restart()
 
         document.addEventListener("legalMove", ssspTree.ncheckState)
         document.addEventListener("keydown", ssspTree.nlogKey)
+        window.addEventListener("resize", this.nrecenter)
     },
     nlogKey : function(e){
         ssspTree.logKey(e)
@@ -66,7 +70,7 @@ const ssspTree = {
         console.log("win"+this.totalRelaxations)
     },
     ncheckState : function(){
-        mstSelectN.checkState()
+        ssspTree.checkState()
     },
     checkState : function(){
         this.totalRelaxations += 1
@@ -74,11 +78,20 @@ const ssspTree = {
             this.win()
         }
     },
+    cleanup : function(){
+        d3.selectAll("svg."+this.name1)
+        .remove()
+    },
+    nrecenter : function(){
+        ssspTree.mode.recenter()
+    },
     exit : function(){
         //TODO cleanup all UI elements, forcedirected graph
-        directedMode.cleanup()
+        this.cleanup()
+        svg0UI.cleanupUI()
         document.removeEventListener("legalMove", ssspTree.ncheckState)
         document.removeEventListener("keydown", ssspTree.nlogKey)
+        window.removeEventListener("resize", this.nrecenter)
     }
 }
 
