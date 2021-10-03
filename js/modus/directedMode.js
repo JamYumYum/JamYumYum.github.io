@@ -89,11 +89,13 @@ const directedMode = {
     },
 
     reset : function(){
+        this.selection = []
         this.ssspHelp.reset()
         this.update()
     },
 
     undo : function(){
+        this.selection.pop()
         this.ssspHelp.undo()
         this.update()
     },
@@ -122,6 +124,7 @@ const directedMode = {
 
     ellipseClick : function(v,name,sim){
         if(this.ssspHelp.tense(v)){
+            this.selection.push(v)
             if (!d3.event.active) sim.alphaTarget(0).stop();
             //Algo.relax(v)
             this.ssspHelp.relax(v)

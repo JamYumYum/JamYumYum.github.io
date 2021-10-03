@@ -117,29 +117,31 @@ const primMode = {
         .filter(d=> v.index===d.index)
         .attr("stroke", e=>{
             this.currentEdge = e
-            if(( (this.selectedSet.indexOf(e.source.name) < 0) || (this.selectedSet.indexOf(e.target.name) < 0) )
-                && (!(this.selectedSet.indexOf(e.source.name) < 0) || !(this.selectedSet.indexOf(e.target.name) < 0))){
-                //source xor target in selectedSet
-                this.selection.push(e)
-                if(this.selectedSet.indexOf(e.source.name) < 0){
-                    this.selectedSet.push(e.source.name)
-                }
-                else{
-                    this.selectedSet.push(e.target.name)
-                }
-                document.dispatchEvent(customEvent.legalMove)
-            }
-            else{
-                if(!(this.selectedSet.indexOf(e.source.name) < 0) && !(this.selectedSet.indexOf(e.target.name) < 0) ){
-                    // illegal move, which would create a cycle
-                    if(!this.ignore[e.index]){
-                        this.ignore[e.index] = true
+            if(this.selection.indexOf(e) < 0){
+                if(( (this.selectedSet.indexOf(e.source.name) < 0) || (this.selectedSet.indexOf(e.target.name) < 0) )
+                    && (!(this.selectedSet.indexOf(e.source.name) < 0) || !(this.selectedSet.indexOf(e.target.name) < 0))){
+                    //source xor target in selectedSet
+                    this.selection.push(e)
+                    if(this.selectedSet.indexOf(e.source.name) < 0){
+                        this.selectedSet.push(e.source.name)
                     }
-                    document.dispatchEvent(customEvent.illegalMove)
+                    else{
+                        this.selectedSet.push(e.target.name)
+                    }
+                    document.dispatchEvent(customEvent.legalMove)
                 }
                 else{
-                    // technically also illegal move, cannot be chosen , uncertain if safe edge
-                    document.dispatchEvent(customEvent.doNothing)
+                    if(!(this.selectedSet.indexOf(e.source.name) < 0) && !(this.selectedSet.indexOf(e.target.name) < 0) ){
+                        // illegal move, which would create a cycle
+                        if(!this.ignore[e.index]){
+                            this.ignore[e.index] = true
+                        }
+                        document.dispatchEvent(customEvent.illegalMove)
+                    }
+                    else{
+                        // technically also illegal move, cannot be chosen , uncertain if safe edge
+                        document.dispatchEvent(customEvent.doNothing)
+                    }
                 }
             }
         })
@@ -399,6 +401,8 @@ const primMode = {
             .force("charge", d3.forceManyBody().strength(-400))
             .force("center", d3.forceCenter(this.width/2,this.height/2))
             .force('collide', d3.forceCollide(50).iterations(6))
+            .force('xAxis', d3.forceX(this.width / 2).strength(0.1))
+            .force('yAxis', d3.forceY(this.width / 2).strength(0.1))
             .on('tick', () => {
                 this.posCalc()
         })

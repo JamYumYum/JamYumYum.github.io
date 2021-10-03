@@ -6,11 +6,9 @@ const svg0UI = {
                         .attr("id", "grid1")
         grid.append("div").attr("id", "svg0")
         grid.append("div").attr("id","infoText")
-        grid.append("div").attr("id","inspector")
-        grid.append("div").attr("id","state")
+        grid.append("div").attr("id","total")
+        grid.append("div").attr("id","selection")
         grid.append("div").attr("id","command")
-        grid.append("div").attr("id","mode")
-        grid.append("div").attr("id","extra")
 
         //get current grid item size for svg
         let element = document.getElementById("svg0")

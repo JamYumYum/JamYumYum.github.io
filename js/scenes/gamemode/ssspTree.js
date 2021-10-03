@@ -20,6 +20,11 @@ const ssspTree = {
         document.addEventListener("legalMove", ssspTree.ncheckState)
         document.addEventListener("keydown", ssspTree.nlogKey)
         window.addEventListener("resize", this.nrecenter)
+
+        d3.select("#infoText").html("Tense edges(red) get relaxed on click. Try to relax all edges with the least amount of clicks!")
+        this.updateTotal()
+        this.updateSelection()
+        this.updateCommand()
     },
     nlogKey : function(e){
         ssspTree.logKey(e)
@@ -56,18 +61,28 @@ const ssspTree = {
             directedMode.reset()
             this.totalRelaxations = 0
         }
+        d3.select("#infoText").html("Initial state.")
+        this.updateTotal()
+        this.updateSelection()
     },
     undo : function(){
         //TODO undo last move
         if(this.totalRelaxations > 0){
             directedMode.undo()
             this.totalRelaxations -= 1
+            d3.select("#infoText").html("Undo 1 move.")
         }
-
+        else{
+            d3.select("#infoText").html("Initial state.")
+        }
+        this.updateTotal()
+        this.updateSelection()
     },
     win : function(){
         //TODO called when player has no more tense edges
         console.log("win"+this.totalRelaxations)
+        d3.select("#infoText").html('You did it in <SPAN STYLE="font-weight:bold">'
+        +this.totalRelaxations+'</SPAN> relaxations!')
     },
     ncheckState : function(){
         ssspTree.checkState()
@@ -77,6 +92,11 @@ const ssspTree = {
         if(directedMode.totalTenseEdges == 0){
             this.win()
         }
+        else{
+            this.legalMessage()
+        }
+        this.updateTotal()
+        this.updateSelection()
     },
     cleanup : function(){
         d3.selectAll("svg."+this.name1)
@@ -92,6 +112,38 @@ const ssspTree = {
         document.removeEventListener("legalMove", ssspTree.ncheckState)
         document.removeEventListener("keydown", ssspTree.nlogKey)
         window.removeEventListener("resize", this.nrecenter)
+    },
+    //message
+    legalMessage : function(){
+        let source = ssspTree.mode.nameMap.nameMap[ssspTree.mode.selection[ssspTree.mode.selection.length-1].source.index]
+        let target = ssspTree.mode.nameMap.nameMap[ssspTree.mode.selection[ssspTree.mode.selection.length-1].target.index]
+        d3.select("#infoText").html(`<SPAN STYLE="text-decoration:overline; font-weight:bold">
+        ${source}${target}
+        </SPAN> relaxed!`)
+    },
+    //total update
+    updateTotal : function(){
+        d3.select("#total").html(`Total relaxations<br>${this.totalRelaxations}`)
+    },
+    //selection update
+    updateSelection : function(){
+        let content = "Relax<br>Recent "
+        for(let i = this.mode.selection.length; i>0 ; i--){
+            let source = this.mode.nameMap.nameMap[this.mode.selection[i-1].source.index]
+            let target = this.mode.nameMap.nameMap[this.mode.selection[i-1].target.index]
+            content = content+ `[${i}]<SPAN STYLE="text-decoration:overline; font-weight:bold">
+            ${source}${target}
+            </SPAN> w: ${this.mode.selection[i-1].key}<br><br>`
+        }
+        d3.select("#selection").html(content)
+    },
+    //command display
+    updateCommand : function(){
+        let content = "Commands Keybind<br>"
+        + "[E] Undo" + "<br>"
+        + "[R] Reset" + "<br>"
+        + "[Q] New Graph"
+        d3.select("#command").html(content)
     }
 }
 

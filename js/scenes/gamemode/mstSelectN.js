@@ -39,7 +39,13 @@ const mstSelectN = {
         // TODO move eventlistener to selectMode
         document.addEventListener("legalMove", mstSelectN.ncheckState)
         document.addEventListener("keydown", mstSelectN.nlogKey)
+        document.addEventListener("illegalMove", mstSelectN.nIllegalMessage)
+        document.addEventListener("doNothing", mstSelectN.nDoNothing)
         window.addEventListener("resize", this.nrecenter)
+
+        d3.select("#infoText").html(`Prim's algorithm has done some work. Which are the next 
+        <SPAN STYLE="font-weight:bold">
+        ${this.totalMoves} </SPAN>edges Prim's algorithm would add to the tree?`)
     },
     nlogKey : function(e){
         mstSelectN.logKey(e)
@@ -55,12 +61,19 @@ const mstSelectN = {
                 break
             case "KeyQ":
                 this.restart()
+                d3.select("#infoText").html("Created new Graph! "+` Now add the next ${this.totalMoves} edges to the tree!`)
                 break
             case "Digit1":
                 this.selectMode(primMode)
+                d3.select("#infoText").html(`Prim's algorithm has done some work. Which are the next 
+                <SPAN STYLE="font-weight:bold">
+                ${this.totalMoves} </SPAN>edges Prim's algorithm would add to the tree?`)
                 break
             case "Digit2":
                 this.selectMode(kruskalMode)
+                d3.select("#infoText").html(`Kruskal's algorithm has done some work. Which are the next 
+                <SPAN STYLE="font-weight:bold">
+                ${this.totalMoves} </SPAN>edges Kruskal's algorithm would add to the tree?`)
                 break
             case "Escape":
                 sceneManager.enterQueue(mainMenu)
@@ -108,14 +121,6 @@ const mstSelectN = {
             case "kruskal":
                 this.data = this.kruskalData
                 break
-            case "undirected":
-                if(Math.floor(Math.random()*2) == 0){
-                    this.data = this.primData
-                }
-                else{
-                    this.data = this.kruskalData
-                }
-                break
         }
         indexSelected = Math.floor(Math.random()* (this.data.mstStep[this.data.mstStep.length-1].length - this.totalMoves))
         for(let i = 0; i< indexSelected+1;i++){
@@ -125,6 +130,9 @@ const mstSelectN = {
         for(let i = 0; i < this.edgeSelection.length; i++){
             this.mode.lineClick(this.edgeSelection[i],this.name1)
         }
+        this.updateTotal()
+        this.updateSelection()
+        this.updateCommand()
         this.freeze = false
     },
     
@@ -134,6 +142,10 @@ const mstSelectN = {
         for(let i =0; i < (currentLength-this.initialEdgeSelection.length);i++){
             this.undo()
         }
+        d3.select("#infoText").html("Initial state.")
+        this.updateTotal()
+        this.updateSelection()
+        this.mode.freeze = false
     },
     undo : function(){
         //TODO undo last move
@@ -141,15 +153,34 @@ const mstSelectN = {
             this.mode.undo()
             this.edgeSelection.pop()
             this.movesRating.pop()
+            d3.select("#infoText").html("Undo 1 move.")
         }
+        else{
+            d3.select("#infoText").html("Initial state.")
+        }
+        this.updateTotal()
+        this.updateSelection()
+        this.mode.freeze = false
     },
     win : function(){
         //TODO
         console.log("win")
+        if(this.mode.ID == "prim"){
+            d3.select("#infoText").html("Good job! You did it just like Prim's algorithm!")
+        }
+        else{
+            d3.select("#infoText").html("Good job! you did it just like Kruskal's algorithm!")
+        }
     },
     lose : function(){
         //TODO
         console.log("lose")
+        if(this.mode.ID == "prim"){
+            d3.select("#infoText").html("Try again! Prim's algorithm wouldn't do that!")
+        }
+        else{
+            d3.select("#infoText").html("Try again! Kruskal's algorithm wouldn't do that!")
+        }
     },
     ncheckState : function(){
         mstSelectN.checkState()
@@ -159,6 +190,7 @@ const mstSelectN = {
         if(this.freeze){
             return
         }
+        this.legalMessage()
         this.edgeSelection.push(this.mode.selection[this.mode.selection.length-1])
         if(this.mode.goodMove()){
             this.movesRating.push(true)
@@ -170,6 +202,7 @@ const mstSelectN = {
         }
         // no more moves left => check for win
         if(this.movesRating.length === this.totalMoves){
+            this.mode.freeze = true
             let win = true
             for(let i = 0; i< this.movesRating.length; i++){
                 if(!this.movesRating[i]){
@@ -183,6 +216,8 @@ const mstSelectN = {
                 this.lose()
             }
         }
+        this.updateTotal()
+        this.updateSelection()
     },
     cleanup : function(){
         d3.selectAll("svg."+this.name1)
@@ -197,8 +232,60 @@ const mstSelectN = {
         svg0UI.cleanupUI()
         document.removeEventListener("legalMove", mstSelectN.ncheckState)
         document.removeEventListener("keydown", mstSelectN.nlogKey)
+        document.removeEventListener("illegalMove", mstSelectN.nIllegalMessage)
+        document.removeEventListener("doNothing", mstSelectN.nDoNothing)
         window.removeEventListener("resize", this.nrecenter)
+    },
+    //messages
+    legalMessage : function(){
+        let source = mstSelectN.mode.nameMap.nameMap[mstSelectN.mode.currentEdge.source.index]
+        let target = mstSelectN.mode.nameMap.nameMap[mstSelectN.mode.currentEdge.target.index]
+        d3.select("#infoText").html(`<SPAN STYLE="text-decoration:overline; font-weight:bold">
+        ${source}${target}
+        </SPAN> added to your tree.`)
+    },
+    nDoNothing : function(){
+        let source = mstSelectN.mode.nameMap.nameMap[mstSelectN.mode.currentEdge.source.index]
+        let target = mstSelectN.mode.nameMap.nameMap[mstSelectN.mode.currentEdge.target.index]
+        d3.select("#infoText").html(`We don't know, if 
+        <SPAN STYLE="text-decoration:overline; font-weight:bold">
+        ${source}${target}
+        </SPAN> is a safe edge!`)
+    },
+    nIllegalMessage : function(){
+        let source = mstSelectN.mode.nameMap.nameMap[mstSelectN.mode.currentEdge.source.index]
+        let target = mstSelectN.mode.nameMap.nameMap[mstSelectN.mode.currentEdge.target.index]
+        d3.select("#infoText").html(`Selecting <SPAN STYLE="text-decoration:overline; font-weight:bold">
+        ${source}${target}
+        </SPAN> would create a cycle!`)
+    },
+    //total update
+    updateTotal : function(){
+        d3.select("#total").html(`Moves left<br>${this.totalMoves-this.movesRating.length}`)
+    },
+    //selection update
+    updateSelection : function(){
+        let content = "Selection<br>Recent "
+        for(let i = this.edgeSelection.length; i>0 ; i--){
+            let source = mstSelectN.mode.nameMap.nameMap[this.edgeSelection[i-1].source.index]
+            let target = mstSelectN.mode.nameMap.nameMap[this.edgeSelection[i-1].target.index]
+            content = content+ `[${i}]<SPAN STYLE="text-decoration:overline; font-weight:bold">
+            ${source}${target}
+            </SPAN> w: ${this.edgeSelection[i-1].key}<br><br>`
+        }
+        d3.select("#selection").html(content)
+    },
+    //command display
+    updateCommand : function(){
+        let content = "Commands Keybind<br>"
+        + "[E] Undo" + "<br>"
+        + "[R] Reset" + "<br>"
+        + "[Q] New Graph" + "<br>"
+        + "[1] Switch to prim" + "<br>"
+        + "[2] Switch to kruskal"
+        d3.select("#command").html(content)
     }
+
 
 }
 

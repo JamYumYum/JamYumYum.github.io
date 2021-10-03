@@ -45,6 +45,20 @@ circle.graphNode2{
    
 }
 */
+
+/*grid2 for tutorial*/
+#grid2{
+    display: grid;
+    grid-template-columns: repeat(9, 1fr); 
+    grid-template-rows: repeat(6, 1fr) ;
+    grid-gap: 0px;
+    width: 100vw;
+    height: 100vh;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+/*grid1 for mstSelectN, buildMST, ssspTree*/
 #grid1{
     display: grid;
     grid-template-columns: repeat(9, 1fr);
@@ -55,6 +69,10 @@ circle.graphNode2{
     position: absolute;
     top: 0;
     left: 0;
+}
+/*grid0 for mainMenu*/
+#grid0{
+    
 }
 /*used by grid1, grid2 */
 #svg0{
@@ -69,8 +87,9 @@ circle.graphNode2{
     border: #202020 solid 5px;
     font-size: 30px;
     font-family: "Comic Sans MS";
+    overflow: auto;
 }
-#inspector{
+#total{
     grid-column: 5/7;
     grid-row: 5/7;
     background-color:#7c7c7c;
@@ -78,43 +97,63 @@ circle.graphNode2{
     border: #202020 solid 5px;
     font-size: 30px;
     font-family: "Comic Sans MS";
+    text-align: center;
+    overflow: auto;
 }
-#state{
+#selection{
     grid-column: 7/10;
-    grid-row: 1/4;
+    grid-row: 1/5;
     background-color:#7c7c7c;
     padding: 10px;
     border: #202020 solid 5px;
     font-size: 30px;
     font-family: "Comic Sans MS";
+    text-align: center;
+    overflow: auto;
 }
 #command{
     grid-column: 7/10;
-    grid-row: 4;
+    grid-row: 5/7;
     background-color:#7c7c7c;
     padding: 10px;
     border: #202020 solid 5px;
     font-size: 30px;
     font-family: "Comic Sans MS";
+    overflow: auto;
 }
-#mode{
-    grid-column: 7/10;
-    grid-row: 5;
-    background-color:#7c7c7c;
-    padding: 10px;
-    border: #202020 solid 5px;
-    font-size: 30px;
-    font-family: "Comic Sans MS";
+
+/*grid3 for vsDijkstra*/
+#grid3{
+    display: grid;
+    grid-template-columns: repeat(9, 1fr);
+    grid-template-rows: repeat(6, 1fr) ;
+    grid-gap: 0px;
+    width: 100vw;
+    height: 100vh;
+    position: absolute;
+    top: 0;
+    left: 0;
 }
-#extra{
-    grid-column: 7/10;
-    grid-row: 6;
-    background-color:#7c7c7c;
-    padding: 10px;
-    border: #202020 solid 5px;
-    font-size: 30px;
-    font-family: "Comic Sans MS";
+/*used by grid3*/
+#svg1{
+
 }
+#svg2{
+
+}
+#infoText2{
+
+}
+#total2{
+
+}
+#selection2{
+
+}
+#command2{
+    
+}
+
 /*used by  */
 .svg1{
     background-color: #4d4d4d;

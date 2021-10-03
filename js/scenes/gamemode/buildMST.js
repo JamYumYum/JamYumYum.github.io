@@ -49,7 +49,6 @@ const buildMST = {
         //.then(response => response.text())
         //.then(text => d3.select("#infoText").html(text))
         d3.select("#infoText").html("Click on Edges in order to add them to your tree. Try to build a MST!")
-        
     },
     nlogKey : function(e){
         buildMST.logKey(e)
@@ -127,12 +126,17 @@ const buildMST = {
             this.minWeight += this.data.mstStep[this.data.mstStep.length-1][i].key
         }
         this.freeze = false
+        this.updateTotal()
+        this.updateSelection()
+        this.updateCommand()
     },
     reset(){
         this.mode.reset()
         this.edgeSelection = []
         this.totalWeight = 0
         d3.select("#infoText").html("Initial state.")
+        this.updateTotal()
+        this.updateSelection()
     },
     undo(){
         if(this.edgeSelection.length != 0){
@@ -144,14 +148,18 @@ const buildMST = {
         else{
             d3.select("#infoText").html("Initial state.")
         }
+        this.updateTotal()
+        this.updateSelection()
     },
     win : function(){
         //TODO
         console.log("win")
+        d3.select("#infoText").html('You did it! The minimum weight is indeed <SPAN STYLE="font-weight:bold">'
+        +this.minWeight+'</SPAN>.')
     },
     lose : function(){
         //TODO
-        console.log("lose")
+        d3.select("#infoText").html("Try again! Your tree is too heavy!")
     },
     ncheckState : function(){
         buildMST.checkState()
@@ -159,13 +167,14 @@ const buildMST = {
     checkState : function(){
         //TODO
         // on click on a safe edge 
-        this.legalMessage()
         if(this.freeze){
             return
         }
+        this.legalMessage()
         this.edgeSelection.push(this.mode.selection[this.mode.selection.length-1])
         this.totalWeight += this.edgeSelection[this.edgeSelection.length-1].key
         if(this.edgeSelection.length === this.totalMoves){
+            
             if(this.totalWeight > this.minWeight){
                 this.lose()
             }
@@ -173,6 +182,8 @@ const buildMST = {
                 this.win()
             }
         }
+        this.updateSelection()
+        this.updateTotal()
     },
     cleanup : function(){
         d3.selectAll("svg."+this.name1)
@@ -213,6 +224,33 @@ const buildMST = {
         d3.select("#infoText").html(`Selecting <SPAN STYLE="text-decoration:overline; font-weight:bold">
         ${source}${target}
         </SPAN> would create a cycle!`)
+    },
+    //total update
+    updateTotal : function(){
+        d3.select("#total").html(`Total weight<br>${this.totalWeight}`)
+    },
+    //selection update
+    updateSelection : function(){
+        let content = "Selection<br>Recent "
+        for(let i = this.edgeSelection.length; i>0 ; i--){
+            let source = buildMST.mode.nameMap.nameMap[this.edgeSelection[i-1].source.index]
+            let target = buildMST.mode.nameMap.nameMap[this.edgeSelection[i-1].target.index]
+            content = content+ `[${i}]<SPAN STYLE="text-decoration:overline; font-weight:bold">
+            ${source}${target}
+            </SPAN> w: ${this.edgeSelection[i-1].key}<br><br>`
+        }
+        d3.select("#selection").html(content)
+    },
+    //command display
+    updateCommand : function(){
+        let content = "Commands Keybind<br>"
+        + "[E] Undo" + "<br>"
+        + "[R] Reset" + "<br>"
+        + "[Q] New Graph" + "<br>"
+        + "[1] Display prim's safe edge support" + "<br>"
+        + "[2] Display kruskal's union-find support" + "<br>"
+        + "[3] Basic Graph"
+        d3.select("#command").html(content)
     }
 
 }

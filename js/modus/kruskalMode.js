@@ -382,6 +382,8 @@ const kruskalMode = {
             .force("charge", d3.forceManyBody().strength(-400))
             .force("center", d3.forceCenter(this.width/2,this.height/2))
             .force('collide', d3.forceCollide(50).iterations(6))
+            .force('xAxis', d3.forceX(this.width / 2).strength(0.1))
+            .force('yAxis', d3.forceY(this.width / 2).strength(0.1))
             .on('tick', () => {
                 this.posCalc()
         })
