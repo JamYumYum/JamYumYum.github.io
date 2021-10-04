@@ -68,6 +68,7 @@ const directedMode = {
                 this.maxWeight = this.graph.edges[i].key
             }
         }
+        this.selection = []
     },
 
     setSvg : function(s1,s2){
@@ -330,6 +331,7 @@ const directedMode = {
         .enter()
         .append("polygon")
         .classed(name, true)
+        .on("mousedown", v=> {if(!this.freeze){return this.ellipseClick(v,name,sim)}})
 
         this.node = field
         .selectAll("circle.graphNode."+name)

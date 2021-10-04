@@ -282,7 +282,8 @@ const mstSelectN = {
         + "[R] Reset" + "<br>"
         + "[Q] New Graph" + "<br>"
         + "[1] Switch to prim" + "<br>"
-        + "[2] Switch to kruskal"
+        + "[2] Switch to kruskal" + "<br>"
+        + "[Esc] Return to Main Menu"
         d3.select("#command").html(content)
     }
 

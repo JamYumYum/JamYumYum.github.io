@@ -249,7 +249,8 @@ const buildMST = {
         + "[Q] New Graph" + "<br>"
         + "[1] Display prim's safe edge support" + "<br>"
         + "[2] Display kruskal's union-find support" + "<br>"
-        + "[3] Basic Graph"
+        + "[3] Basic Graph" + "<br>"
+        + "[Esc] Return to Main Menu"
         d3.select("#command").html(content)
     }
 

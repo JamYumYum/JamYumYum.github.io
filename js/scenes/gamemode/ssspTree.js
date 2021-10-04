@@ -20,7 +20,7 @@ const ssspTree = {
         document.addEventListener("legalMove", ssspTree.ncheckState)
         document.addEventListener("keydown", ssspTree.nlogKey)
         window.addEventListener("resize", this.nrecenter)
-
+        // UI update
         d3.select("#infoText").html("Tense edges(red) get relaxed on click. Try to relax all edges with the least amount of clicks!")
         this.updateTotal()
         this.updateSelection()
@@ -40,6 +40,9 @@ const ssspTree = {
                 break
             case "KeyQ":
                 this.restart()
+                d3.select("#infoText").html("Created new Graph!")
+                this.updateTotal()
+                this.updateSelection()
                 break
             case "Escape":
                 sceneManager.enterQueue(mainMenu)
@@ -142,7 +145,8 @@ const ssspTree = {
         let content = "Commands Keybind<br>"
         + "[E] Undo" + "<br>"
         + "[R] Reset" + "<br>"
-        + "[Q] New Graph"
+        + "[Q] New Graph" + "<br>"
+        + "[Esc] Return to Main Menu"
         d3.select("#command").html(content)
     }
 }

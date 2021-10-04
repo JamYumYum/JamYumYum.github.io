@@ -4,6 +4,7 @@ import * as A from '../../algo.js';
 import * as G from '../../graphGenerator.js';
 import { sceneManager } from "../sceneManager.js";
 import { mainMenu } from "../mainMenu.js";
+import {svg12UI} from "../../UI/svg12.js";
 
 const vsDijkstra = {
     graph1 : undefined,
@@ -18,10 +19,17 @@ const vsDijkstra = {
     totalRelaxations : 0,
     start : function(){
         //initiate 2 force simulations
+        svg12UI.drawUI(directedMode, vsDijkstraGraph)
         this.restart()
 
         document.addEventListener("legalMove", vsDijkstra.ncheckState)
         document.addEventListener("keydown", vsDijkstra.nlogKey)
+        window.addEventListener("resize", this.nrecenter)
+        //UI update
+        d3.select("#infoText2").html("Remove all tense edges with less relaxations than Dijkstra!")
+        this.updateTotal()
+        this.updateSelection()
+        this.updateCommand()
     },
     nlogKey : function(e){
         vsDijkstra.logKey(e)
@@ -37,6 +45,9 @@ const vsDijkstra = {
                 break
             case "KeyQ":
                 this.restart()
+                d3.select("#infoText2").html("Created new Graph!")
+                this.updateTotal()
+                this.updateSelection()
                 break
             case "Escape":
                 sceneManager.enterQueue(mainMenu)
@@ -66,6 +77,9 @@ const vsDijkstra = {
             vsDijkstraGraph.reset()
             this.totalRelaxations = 0
         }
+        d3.select("#infoText2").html("Initial state.")
+        this.updateTotal()
+        this.updateSelection()
     },
     undo : function(){
         //TODO undo last move
@@ -73,20 +87,29 @@ const vsDijkstra = {
             directedMode.undo()
             vsDijkstraGraph.undo()
             this.totalRelaxations -= 1
+            d3.select("#infoText2").html("Undo 1 move.")
         }
+        else{
+            d3.select("#infoText2").html("Initial state.")
+        }
+        this.updateTotal()
+        this.updateSelection()
 
     },
     win : function(){
         //TODO called when player has no more tense edges
         console.log("win"+this.totalRelaxations)
+        d3.select("#infoText2").html("You win!")
     },
     lose : function(){
         //TODO called when dijkstra has no more tense edges
         console.log("lose"+this.totalRelaxations)
+        d3.select("#infoText2").html("You lose!")
     },
     draw : function(){
         //TODO called when both have no more tense edges
         console.log("draw")
+        d3.select("#infoText2").html("Draw!")
     },
     ncheckState : function(){
         vsDijkstra.checkState()
@@ -103,6 +126,10 @@ const vsDijkstra = {
                 //dijkstra done
                 this.lose()
             }
+            else{
+                //continue
+                this.legalMessage()
+            }
         }
         else{
             //player done
@@ -115,13 +142,61 @@ const vsDijkstra = {
                 this.win()
             }
         }
+        this.updateTotal()
+        this.updateSelection()
+    },
+    cleanup : function(){
+        d3.selectAll("svg."+this.name1)
+        .remove()
+
+        d3.selectAll("svg."+this.name2)
+        .remove()
+    },
+    nrecenter : function(){
+        directedMode.recenter()
+        vsDijkstraGraph.recenter()
     },
     exit : function(){
         //TODO cleanup all UI elements, forcedirected graph
         directedMode.cleanup()
         vsDijkstraGraph.cleanup()
+        svg12UI.cleanupUI()
         document.removeEventListener("legalMove", vsDijkstra.ncheckState)
         document.removeEventListener("keydown", vsDijkstra.nlogKey)
+        window.removeEventListener("resize", this.nrecenter)
+    },
+    //message
+    legalMessage : function(){
+        let source = directedMode.nameMap.nameMap[directedMode.selection[directedMode.selection.length-1].source.index]
+        let target = directedMode.nameMap.nameMap[directedMode.selection[directedMode.selection.length-1].target.index]
+        d3.select("#infoText2").html(`<SPAN STYLE="text-decoration:overline; font-weight:bold">
+        ${source}${target}
+        </SPAN> relaxed!`)
+    },
+    //total update
+    updateTotal : function(){
+        d3.select("#total2").html(`Total relaxations<br>${this.totalRelaxations}`)
+    },
+    //selection update
+    updateSelection : function(){
+        let content = "Relax<br>Recent "
+        for(let i = directedMode.selection.length; i>0 ; i--){
+            let source = directedMode.nameMap.nameMap[directedMode.selection[i-1].source.index]
+            let target = directedMode.nameMap.nameMap[directedMode.selection[i-1].target.index]
+            content = content+ `[${i}]<SPAN STYLE="text-decoration:overline; font-weight:bold">
+            ${source}${target}
+            </SPAN> w: ${directedMode.selection[i-1].key}<br><br>`
+        }
+        d3.select("#selection2").html(content)
+    },
+    //command display
+    updateCommand : function(){
+        let content = "Commands Keybind<br>"
+        + "[E] Undo" + "<br>"
+        + "[R] Reset" + "<br>"
+        + "[Q] New Graph" + "<br>"
+        + "[Esc] Return to Main Menu"
+        d3.select("#command2").html(content)
     }
 }
 

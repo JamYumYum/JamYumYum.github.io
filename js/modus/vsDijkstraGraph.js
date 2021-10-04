@@ -65,6 +65,7 @@ const vsDijkstraGraph = {
         }
         this.nameMap = nodeNameMap
         this.nameMap.map(this.graph.vertices)
+        this.selection = []
     },
 
     setSvg : function(s1,s2){
@@ -453,7 +454,6 @@ const vsDijkstraGraph = {
         sim.tick(500)
         sim.velocityDecay(0.3)
         this.freeze = true
-        setTimeout(()=>{this.freeze = false}, this.animationDuration)
         this.draw(name,field,sim);
         
     },
