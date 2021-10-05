@@ -38,8 +38,8 @@ const primMode = {
     edgeTextOffset : 15,
     animationDuration : 300,
     ignore : [],
-    selection : [],
-    startVertex : 0,
+    selection : [], // selected EDGES objects
+    startVertex : undefined,
     selectedSet : [],
     svg : undefined,
     nameMap : undefined,
@@ -49,10 +49,11 @@ const primMode = {
     setGraph : function(g){
         this.graph = g
         this.selection = []
-        this.selectedSet = [this.startVertex]
+        this.selectedSet = []
         this.nameMap = nodeNameMap
         this.nameMap.map(this.graph.vertices)
         this.ignore = []
+        this.startVertex = undefined
         for(let i = 0; i<this.graph.edges.length;i++){
             this.ignore.push(false)
         }
@@ -68,6 +69,7 @@ const primMode = {
 
     reset : function(){
         this.selection = []
+        this.startVertex = undefined
         this.selectedSet = [this.startVertex]
         for(let i = 0; i<this.ignore.length; i++){
             this.ignore[i] = false
@@ -81,6 +83,9 @@ const primMode = {
             this.selectedSet.pop()
             
             this.update()
+        }
+        else{
+            this.reset()
         }
     },
 
@@ -113,6 +118,9 @@ const primMode = {
         return true
     },
     lineClick : function(v,name){
+        if(this.startVertex == undefined){
+            return
+        }
         d3.selectAll("line.graphEdge."+name)
         .filter(d=> v.index===d.index)
         .attr("stroke", e=>{
@@ -148,7 +156,17 @@ const primMode = {
         this.update()
         document.dispatchEvent(customEvent.edgeClicked)
     },
-
+    nodeClick: function(v){
+        this.currentNode = v
+        if(this.startVertex == undefined){
+            this.startVertex = v.name
+            this.selectedSet = [this.startVertex]
+            this.freeze = true
+            setTimeout(()=>{this.freeze = false}, this.animationDuration)
+            this.update()
+            document.dispatchEvent(customEvent.nodeClicked)
+            }
+    },
     update : function(){
         //line Update
         d3.selectAll("line.graphEdge")
@@ -326,8 +344,8 @@ const primMode = {
             .attr("r", this.nodeR1)
             })
         .on("mousedown", v=>{
-            this.currentNode = v
-            document.dispatchEvent(customEvent.nodeClicked)
+            if(this.freeze){return}
+            this.nodeClick(v)
         })
         .call(
             d3

@@ -2,6 +2,7 @@ import { buildMST } from "./gamemode/buildMST.js";
 import { mstSelectN } from "./gamemode/mstSelectN.js";
 import { ssspTree } from "./gamemode/ssspTree.js";
 import { vsDijkstra } from "./gamemode/vsDijkstra.js";
+import { primTutorial } from "./tutorial/primTutorial.js";
 import { sceneManager } from "./sceneManager.js";
 
 const mainMenu = {
@@ -29,6 +30,10 @@ const mainMenu = {
                 break
             case "Digit4":
                 sceneManager.enterQueue(vsDijkstra)
+                sceneManager.nextScene()
+                break
+            case "Digit5":
+                sceneManager.enterQueue(primTutorial)
                 sceneManager.nextScene()
                 break
         }

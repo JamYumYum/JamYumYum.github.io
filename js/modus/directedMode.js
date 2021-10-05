@@ -51,6 +51,8 @@ const directedMode = {
     minWeight : undefined,
     maxWeight : undefined,
     nameMap : undefined,
+    dijkstraView : false, // see only tense edges dijkstra sees CANNOT UNDO IN DIJKSTRAVIEW!!
+    visited : [], // needed for dijkstraView
     freeze : false,
     setGraph : function(g){
         this.graph = g
@@ -69,6 +71,8 @@ const directedMode = {
             }
         }
         this.selection = []
+        this.dijkstraView = false
+        this.visited  = []
     },
 
     setSvg : function(s1,s2){
@@ -92,6 +96,8 @@ const directedMode = {
     reset : function(){
         this.selection = []
         this.ssspHelp.reset()
+        this.dijkstraView = false
+        this.visited  = []
         this.update()
     },
 
@@ -447,16 +453,16 @@ const directedMode = {
         
         sim = d3.forceSimulation(this.graph.vertices)
             //.force("link", d3.forceLink(graph.edges).distance(100).strength(2))
-            .force("link", d3.forceLink(this.graph.edges).distance(55).strength(1.9))
-            .force("charge", d3.forceManyBody().strength(-400))
+            .force("link", d3.forceLink(this.graph.edges).distance(100).strength(1.9))
+            .force("charge", d3.forceManyBody().strength(-1000))
             .force("center", d3.forceCenter(this.width/2,this.height/2))
-            .force('xAxis', d3.forceX(this.width / 2).strength(0.05))
-            .force('yAxis', d3.forceY(this.width / 2).strength(0.05))
-            .force('collide', d3.forceCollide(55).iterations(6))
+            .force('xAxis', d3.forceX(this.width / 2).strength(0.1))
+            .force('yAxis', d3.forceY(this.width / 2).strength(0.1))
+            .force('collide', d3.forceCollide(40).iterations(6))
             .on('tick', () => {
                 this.posCalc()
                 if(this.startup){
-                    this.update()
+                    //this.update()
                     this.startup = false
                 }
             })
@@ -468,6 +474,7 @@ const directedMode = {
         this.freeze = true
         setTimeout(()=>{this.freeze = false}, this.animationDuration)
         this.draw(name,field,sim);
+        this.update()
         
     },
     recenter: function(){

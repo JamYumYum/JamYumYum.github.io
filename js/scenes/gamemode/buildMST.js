@@ -43,6 +43,7 @@ const buildMST = {
         document.addEventListener("keydown", buildMST.nlogKey)
         document.addEventListener("illegalMove", buildMST.nIllegalMessage)
         document.addEventListener("doNothing", buildMST.nDoNothing)
+        document.addEventListener("nodeClicked", buildMST.nNodeClicked)
         window.addEventListener("resize", this.nrecenter)
 
         //fetch("../../../text/testText.txt")
@@ -68,7 +69,7 @@ const buildMST = {
                 break
             case "Digit1":
                 this.selectMode(primMode)
-                d3.select("#infoText").html("Showing Safe Edges.")
+                d3.select("#infoText").html("Showing Safe Edges. Select a starting vertex!")
                 break
             case "Digit2":
                 this.selectMode(kruskalMode)
@@ -134,7 +135,12 @@ const buildMST = {
         this.mode.reset()
         this.edgeSelection = []
         this.totalWeight = 0
-        d3.select("#infoText").html("Initial state.")
+        if(this.mode.ID == "prim"){
+            d3.select("#infoText").html("Select a starting vertex!")
+        }
+        else{
+            d3.select("#infoText").html("Initial state.")
+        }
         this.updateTotal()
         this.updateSelection()
     },
@@ -147,6 +153,7 @@ const buildMST = {
         }
         else{
             d3.select("#infoText").html("Initial state.")
+            this.reset()
         }
         this.updateTotal()
         this.updateSelection()
@@ -200,6 +207,7 @@ const buildMST = {
         document.removeEventListener("keydown", buildMST.nlogKey)
         document.removeEventListener("illegalMove", buildMST.nIllegalMessage)
         document.removeEventListener("doNothing", buildMST.nDoNothing)
+        document.removeEventListener("nodeClicked", buildMST.nNodeClicked)
         window.removeEventListener("resize", this.nrecenter)
     },
     //messages
@@ -224,6 +232,12 @@ const buildMST = {
         d3.select("#infoText").html(`Selecting <SPAN STYLE="text-decoration:overline; font-weight:bold">
         ${source}${target}
         </SPAN> would create a cycle!`)
+    },
+    nNodeClicked : function(){
+        let startVertex = primMode.nameMap.nameMap[primMode.startVertex]
+        d3.select("#infoText").html(`Starting at <SPAN STYLE="font-weight:bold">
+        ${startVertex}
+        </SPAN>!`)
     },
     //total update
     updateTotal : function(){

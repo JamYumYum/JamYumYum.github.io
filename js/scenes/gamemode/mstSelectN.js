@@ -34,6 +34,7 @@ const mstSelectN = {
         this.kruskalData = A.kruskal(this.graph)
         this.mode.setGraph(this.graph)
         this.mode.initiateSimulation(this.name1,this.svg1,this.sim1)
+        primMode.nodeClick(this.graph.vertices[0])
         
         this.generateGame()
         // TODO move eventlistener to selectMode
@@ -89,6 +90,7 @@ const mstSelectN = {
         this.kruskalData = A.kruskal(this.graph)
         this.mode.setGraph(this.graph)
         this.mode.initiateSimulation(this.name1,this.svg1,this.sim1)
+        primMode.nodeClick(this.graph.vertices[0])
         this.generateGame()
     },
     test : function(){
@@ -230,6 +232,7 @@ const mstSelectN = {
         //TODO cleanup UI, force directed graph, eventlisteners
         this.cleanup()
         svg0UI.cleanupUI()
+        primMode.reset()
         document.removeEventListener("legalMove", mstSelectN.ncheckState)
         document.removeEventListener("keydown", mstSelectN.nlogKey)
         document.removeEventListener("illegalMove", mstSelectN.nIllegalMessage)

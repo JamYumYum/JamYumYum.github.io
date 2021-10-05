@@ -261,7 +261,7 @@ const undirectedMode = {
             })
         .on("mousedown", v=>{
             this.currentNode = v
-            document.dispatchEvent(customEvent.nodeClicked)
+            //document.dispatchEvent(customEvent.nodeClicked)
         })
         .call(
             d3
