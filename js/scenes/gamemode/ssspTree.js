@@ -53,7 +53,7 @@ const ssspTree = {
     restart : async function(){
         directedMode.cleanup()
         this.totalRelaxations = 0
-        this.graph1 = G.mstGraph()
+        this.graph1 = G.tutorialGraph() //mstGraph()
         A.initValue(this.graph1,0)
         directedMode.setGraph(this.graph1)
         directedMode.initiateSimulation(this.name1,this.svg1,this.sim1)

@@ -447,12 +447,12 @@ const directedMode = {
         
         sim = d3.forceSimulation(this.graph.vertices)
             //.force("link", d3.forceLink(graph.edges).distance(100).strength(2))
-            .force("link", d3.forceLink(this.graph.edges).distance(50).strength(0.9))
+            .force("link", d3.forceLink(this.graph.edges).distance(55).strength(1.9))
             .force("charge", d3.forceManyBody().strength(-400))
             .force("center", d3.forceCenter(this.width/2,this.height/2))
-            .force('xAxis', d3.forceX(this.width / 2).strength(0.1))
-            .force('yAxis', d3.forceY(this.width / 2).strength(0.1))
-            .force('collide', d3.forceCollide(50).iterations(6))
+            .force('xAxis', d3.forceX(this.width / 2).strength(0.05))
+            .force('yAxis', d3.forceY(this.width / 2).strength(0.05))
+            .force('collide', d3.forceCollide(55).iterations(6))
             .on('tick', () => {
                 this.posCalc()
                 if(this.startup){
@@ -462,9 +462,9 @@ const directedMode = {
             })
         ;
         this.sim1 = sim
-        sim.velocityDecay(0.1)
+        //sim.velocityDecay(0.1)
         sim.tick(500)
-        sim.velocityDecay(0.3)
+        //sim.velocityDecay(0.3)
         this.freeze = true
         setTimeout(()=>{this.freeze = false}, this.animationDuration)
         this.draw(name,field,sim);
@@ -478,8 +478,8 @@ const directedMode = {
         this.height = parseInt(style.getPropertyValue("height"))
 
         this.sim1.force("center", d3.forceCenter(this.width/2,this.height/2))
-        .force('xAxis', d3.forceX(this.width / 2).strength(0.1))
-        .force('yAxis', d3.forceY(this.width / 2).strength(0.1))
+        //.force('xAxis', d3.forceX(this.width / 2).strength(0.1))
+        //.force('yAxis', d3.forceY(this.width / 2).strength(0.1))
         .alpha(1).restart()
 
         d3.select("svg."+this.svg)

@@ -65,6 +65,30 @@ export function mstGraph(){
     return graph;    
 }
 
+export function tutorialGraph(){
+    const graph = {vertices:[], edges:[]};
+    for (let i = 0; i < 9; i++){
+        graph.vertices[i] = { name: i, key: 0};
+    }
+    graph.edges[0] = {source: 3, target: 1, key: 4};
+    graph.edges[1] = {source: 4, target: 3, key: 5};
+    graph.edges[2] = {source: 1, target: 4, key: 2};
+    graph.edges[3] = {source: 5, target: 4, key: 7};
+    graph.edges[4] = {source: 2, target: 5, key: 3};
+    graph.edges[5] = {source: 4, target: 2, key: 5};
+    graph.edges[6] = {source: 1, target: 0, key: 4};
+    graph.edges[7] = {source: 2, target: 1, key: 2};
+    graph.edges[8] = {source: 0, target: 2, key: 6};
+    graph.edges[9] = {source: 6, target: 4, key: 5};
+    graph.edges[10] = {source: 3, target: 6, key: 1};
+    graph.edges[11] = {source: 7, target: 5, key: 6};
+    graph.edges[12] = {source: 4, target: 7, key: 1};
+    graph.edges[13] = {source: 7, target: 6, key: 4};
+    graph.edges[14] = {source: 8, target: 7, key: 3};
+    graph.edges[15] = {source: 6, target: 8, key: 7};
+    return graph;
+}
+
 export function randomGraph(){
     const graph = {vertices:[], edges:[]};
     const min = 12;
