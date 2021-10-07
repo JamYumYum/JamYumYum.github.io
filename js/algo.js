@@ -253,7 +253,7 @@ export function dijkstra (graph,startvertex) {
     
     result.distStep.push(currentDist.slice());
     result.predStep.push(currentPred.slice());
-    result.pQueueStep.push(pQueue.data.slice());
+    result.pQueueStep.push(pQueue.data.slice);
 
     while(pQueue.data.length > 1){
         let currentVertex = pQueue.extractMin();
@@ -280,10 +280,12 @@ export function dijkstra (graph,startvertex) {
                 result.edgeSelection.push(neighbourEdges[i]);
             }
         }
+        //console.log(pQueue.data)
         result.distStep.push(currentDist.slice());
         result.predStep.push(currentPred.slice());
-        result.pQueueStep.push(pQueue.data.slice());
+        //result.pQueueStep.push(pQueue.data.slice());
 
+        result.pQueueStep.push(pQueue.data.slice);
     }
     //restore initial distances
     for(let i = 0; i<initialDistances.length; i++){

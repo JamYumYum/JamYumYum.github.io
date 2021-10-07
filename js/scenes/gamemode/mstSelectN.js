@@ -92,6 +92,7 @@ const mstSelectN = {
         this.mode.initiateSimulation(this.name1,this.svg1,this.sim1)
         primMode.nodeClick(this.graph.vertices[0])
         this.generateGame()
+        console.log(this.kruskalData)
     },
     test : function(){
         console.log("clicked")

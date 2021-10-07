@@ -85,7 +85,7 @@ circle.graphNode2{
     background-color:#7c7c7c;
     padding: 10px;
     border: #202020 solid 5px;
-    font-size: 30px;
+    font-size: 2vw;
     font-family: "Comic Sans MS";
     overflow: auto;
 }
@@ -95,7 +95,7 @@ circle.graphNode2{
     background-color:#7c7c7c;
     padding: 10px;
     border: #202020 solid 5px;
-    font-size: 30px;
+    font-size: 2vw;
     font-family: "Comic Sans MS";
     text-align: center;
     overflow: auto;
@@ -106,7 +106,7 @@ circle.graphNode2{
     background-color:#7c7c7c;
     padding: 10px;
     border: #202020 solid 5px;
-    font-size: 30px;
+    font-size: 1.5vw;
     font-family: "Comic Sans MS";
     text-align: center;
     overflow: auto;
@@ -117,7 +117,7 @@ circle.graphNode2{
     background-color:#7c7c7c;
     padding: 10px;
     border: #202020 solid 5px;
-    font-size: 30px;
+    font-size: 1.2vw;
     font-family: "Comic Sans MS";
     overflow: auto;
 }
@@ -134,13 +134,34 @@ circle.graphNode2{
 .confirm{
     background-color: #942a2a;
     position: absolute;
+    border-style: solid;
+    border-width: 5%;
     border-radius: 20%;
-    bottom: 33%;
-    right: 33%;
+    bottom: 15%;
+    right: 39.5%;
     width: 10%;
     height: 10%;
     z-index: 2;
+    font-size: 3vw;
     display: table;
+}
+.confirm:hover{
+    background-color: #722121;
+}
+.confirm.next{
+    background-color: #0fbd43;
+    position: absolute;
+    border-radius: 20%;
+    bottom: 15%;
+    right: 39.5%;
+    width: 10%;
+    height: 10%;
+    z-index: 2;
+    font-size: 3vw;
+    display: table;
+}
+.confirm.next:hover{
+    background-color: #1c6d34;
 }
 .confirmText{
     z-index: 1;
@@ -148,6 +169,7 @@ circle.graphNode2{
     display: table-cell;
     vertical-align: middle;
 }
+
 /*grid3 for vsDijkstra*/
 #grid3{
     display: grid;
@@ -172,7 +194,6 @@ circle.graphNode2{
     z-index: 1;
 }
 #infoText2{
-    display: grid;
     grid-column: 1/4;
     grid-row: 5/7;
     background-color:#7c7c7c;
@@ -223,4 +244,14 @@ circle.graphNode2{
 .svg2{
     background-color: #202020;
 }
+
+.noselect {
+    -webkit-touch-callout: none; /* iOS Safari */
+      -webkit-user-select: none; /* Safari */
+       -khtml-user-select: none; /* Konqueror HTML */
+         -moz-user-select: none; /* Old versions of Firefox */
+          -ms-user-select: none; /* Internet Explorer/Edge */
+              user-select: none; /* Non-prefixed version, currently
+                                    supported by Chrome, Edge, Opera and Firefox */
+  }
 

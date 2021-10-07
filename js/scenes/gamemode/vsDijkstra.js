@@ -68,7 +68,7 @@ const vsDijkstra = {
         directedMode.initiateSimulation(this.name1,this.svg1,this.sim1)//.then(directedMode.test())
         vsDijkstraGraph.initiateSimulation(this.name2,this.svg2,this.sim2)
         vsDijkstraGraph.freeze = true
-        console.log(this.dijkstraData)
+        //console.log(this.dijkstraData)
     },
     reset : function(){
         //TODO reset state
@@ -170,8 +170,7 @@ const vsDijkstra = {
         let source = directedMode.nameMap.nameMap[directedMode.selection[directedMode.selection.length-1].source.index]
         let target = directedMode.nameMap.nameMap[directedMode.selection[directedMode.selection.length-1].target.index]
         d3.select("#infoText2").html(`<SPAN STYLE="text-decoration:overline; font-weight:bold">
-        ${source}${target}
-        </SPAN> relaxed!`)
+        ${source}${target}</SPAN> relaxed!`)
     },
     //total update
     updateTotal : function(){

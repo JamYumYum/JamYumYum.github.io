@@ -4,6 +4,7 @@ import { ssspTree } from "./gamemode/ssspTree.js";
 import { vsDijkstra } from "./gamemode/vsDijkstra.js";
 import { primTutorial } from "./tutorial/primTutorial.js";
 import { sceneManager } from "./sceneManager.js";
+import { kruskalTutorial } from "./tutorial/kruskalTutorial.js";
 
 const mainMenu = {
     start : function(){
@@ -34,6 +35,10 @@ const mainMenu = {
                 break
             case "Digit5":
                 sceneManager.enterQueue(primTutorial)
+                sceneManager.nextScene()
+                break
+            case "Digit6":
+                sceneManager.enterQueue(kruskalTutorial)
                 sceneManager.nextScene()
                 break
         }
