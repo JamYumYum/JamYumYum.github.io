@@ -85,7 +85,7 @@ circle.graphNode2{
     background-color:#7c7c7c;
     padding: 10px;
     border: #202020 solid 5px;
-    font-size: 2vw;
+    font-size: 3vh;
     font-family: "Comic Sans MS";
     overflow: auto;
 }
@@ -106,7 +106,7 @@ circle.graphNode2{
     background-color:#7c7c7c;
     padding: 10px;
     border: #202020 solid 5px;
-    font-size: 1.5vw;
+    font-size: 2vh;
     font-family: "Comic Sans MS";
     text-align: center;
     overflow: auto;
@@ -199,7 +199,7 @@ circle.graphNode2{
     background-color:#7c7c7c;
     padding: 10px;
     border: #202020 solid 5px;
-    font-size: 30px;
+    font-size: 3vh;
     font-family: "Comic Sans MS";
     overflow: auto;
 }
@@ -210,7 +210,7 @@ circle.graphNode2{
     background-color:#7c7c7c;
     padding: 10px;
     border: #202020 solid 5px;
-    font-size: 30px;
+    font-size: 1.5vw;
     font-family: "Comic Sans MS";
     text-align: center;
     overflow: auto;
@@ -221,7 +221,7 @@ circle.graphNode2{
     background-color:#7c7c7c;
     padding: 10px;
     border: #202020 solid 5px;
-    font-size: 30px;
+    font-size: 2vh;
     font-family: "Comic Sans MS";
     text-align: center;
     overflow: auto;
@@ -232,7 +232,7 @@ circle.graphNode2{
     background-color:#7c7c7c;
     padding: 10px;
     border: #202020 solid 5px;
-    font-size: 30px;
+    font-size: 1.2vw;
     font-family: "Comic Sans MS";
     overflow: auto;
 }
@@ -255,3 +255,7 @@ circle.graphNode2{
                                     supported by Chrome, Edge, Opera and Firefox */
   }
 
+/* main menu buttons */
+.button{
+    background-color: #4845ff;
+}

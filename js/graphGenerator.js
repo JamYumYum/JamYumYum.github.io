@@ -65,6 +65,31 @@ export function mstGraph(){
     return graph;    
 }
 
+export function strongConnectedGraph(){
+    const graph = {vertices:[], edges:[]};
+    const min = 12;
+    const max = 17;
+    const weightMin = 1;
+    const weightMax = 12;
+    let cycles = []
+    let c = []
+    const verticesAmount = Math.floor(Math.random() * (max+1-min) + min);
+    for (let i = 0; i < verticesAmount; i++){
+        graph.vertices[i] = { name: i, key: 0};
+        if(c.length == 3){
+            cycles.push(c.slice())
+            c = []
+        }
+    }
+
+    if(c.length != 0){
+        if(c.length == 1){
+            //cycles[]
+        }
+    }
+
+}
+
 export function tutorialGraph(){
     const graph = {vertices:[], edges:[]};
     for (let i = 0; i < 9; i++){

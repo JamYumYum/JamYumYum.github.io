@@ -43,6 +43,7 @@ const primTutorial = {
         
         this.initMessages()
         d3.select("#infoText").html(this.messages[0])
+        this.updateCommand()
     },
     nlogKey : function(e){
         primTutorial.logKey(e)
@@ -397,6 +398,12 @@ const primTutorial = {
         d3.select("body").append("div").classed("confirm", true).classed("next",true)
         d3.select(".confirm").append("div").classed("confirmText", true).html("Next")
         d3.select(".confirm").on("mousedown", v=>{nextFunction(parameter1)})
+    },
+    //command display
+    updateCommand : function(){
+        let content = "Commands Keybind<br>"
+        + "[Esc] Return to Main Menu"
+        d3.select("#command").html(content)
     }
 }
 

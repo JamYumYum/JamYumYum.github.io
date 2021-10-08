@@ -63,11 +63,12 @@ const vsDijkstra = {
         A.initValue(this.graph1,0)
         this.graph2 = G.copyGraph(this.graph1)
         this.dijkstraData = A.dijkstra(this.graph2, 0)
-        directedMode.setGraph(this.graph1)
+        directedMode.setGraph(this.graph1,0)
         vsDijkstraGraph.setGraph(this.graph2)
         directedMode.initiateSimulation(this.name1,this.svg1,this.sim1)//.then(directedMode.test())
         vsDijkstraGraph.initiateSimulation(this.name2,this.svg2,this.sim2)
         vsDijkstraGraph.freeze = true
+        directedMode.freeze = false
         //console.log(this.dijkstraData)
     },
     reset : function(){
@@ -80,6 +81,7 @@ const vsDijkstra = {
         d3.select("#infoText2").html("Initial state.")
         this.updateTotal()
         this.updateSelection()
+        directedMode.freeze = false
     },
     undo : function(){
         //TODO undo last move
@@ -94,6 +96,7 @@ const vsDijkstra = {
         }
         this.updateTotal()
         this.updateSelection()
+        directedMode.freeze = false
 
     },
     win : function(){
@@ -105,6 +108,7 @@ const vsDijkstra = {
         //TODO called when dijkstra has no more tense edges
         console.log("lose"+this.totalRelaxations)
         d3.select("#infoText2").html("You lose!")
+        directedMode.freeze = true
     },
     draw : function(){
         //TODO called when both have no more tense edges

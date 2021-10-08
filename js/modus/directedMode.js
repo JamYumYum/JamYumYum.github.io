@@ -1,4 +1,5 @@
 import * as G from '../graphGenerator.js';
+import * as A from '../algo.js'
 import * as Vector from '../2dVector.js'
 import SsspHelp from '../ds/ssspHelp.js';
 import { nodeNameMap } from '../tools/nodeNameMap.js';
@@ -53,8 +54,11 @@ const directedMode = {
     nameMap : undefined,
     dijkstraView : false, // see only tense edges dijkstra sees CANNOT UNDO IN DIJKSTRAVIEW!!
     visited : [], // needed for dijkstraView
+    startVertex : undefined, // start
+    currentEdge : undefined, //last clicked edge
+    currentVertex : undefined, // last clicked vertex
     freeze : false,
-    setGraph : function(g){
+    setGraph : function(g, start){
         this.graph = g
         this.startup = true
         this.ssspHelp = new SsspHelp(this.graph)
@@ -73,6 +77,7 @@ const directedMode = {
         this.selection = []
         this.dijkstraView = false
         this.visited  = []
+        this.startVertex = start
     },
 
     setSvg : function(s1,s2){
@@ -130,6 +135,7 @@ const directedMode = {
     },
 
     ellipseClick : function(v,name,sim){
+        this.currentEdge = v
         if(this.ssspHelp.tense(v)){
             this.selection.push(v)
             if (!d3.event.active) sim.alphaTarget(0).stop();
@@ -143,7 +149,24 @@ const directedMode = {
         else{
             document.dispatchEvent(customEvent.doNothing)
         }
+        
         console.log("click")
+    },
+    nodeClick: function(v){
+        this.currentVertex = v
+        if(this.startVertex == undefined){
+            this.startVertex = v.name
+            this.freeze = true
+            A.initValue(this.graph,this.startVertex)
+            this.ssspHelp = new SsspHelp(this.graph)
+            console.log(this.graph)
+            console.log(this.ssspHelp)
+            setTimeout(()=>{this.freeze = false}, this.animationDuration)
+            this.sim1.alphaTarget(0).stop();
+            this.update()
+            setTimeout(()=>{this.sim1.alphaTarget(0).restart()},this.animationDuration)
+            document.dispatchEvent(customEvent.nodeClicked)
+            }
     },
 
     update : function(){
@@ -337,7 +360,7 @@ const directedMode = {
         .enter()
         .append("polygon")
         .classed(name, true)
-        .on("mousedown", v=> {if(!this.freeze){return this.ellipseClick(v,name,sim)}})
+        .on("mousedown", v=> {if(!this.freeze && this.ssspHelp.tense(v)){return this.ellipseClick(v,name,sim)}})
 
         this.node = field
         .selectAll("circle.graphNode."+name)
@@ -370,6 +393,10 @@ const directedMode = {
             .duration(this.animationDuration)
             .attr("r", this.nodeR1)
             })
+        .on("mousedown", v=>{
+            if(this.freeze){return}
+            this.nodeClick(v)
+        })
         .call(
             d3
             .drag()
@@ -469,10 +496,11 @@ const directedMode = {
         ;
         this.sim1 = sim
         //sim.velocityDecay(0.1)
-        sim.tick(500)
+        sim.tick(1000)
         //sim.velocityDecay(0.3)
         this.freeze = true
-        setTimeout(()=>{this.freeze = false}, this.animationDuration)
+        sim.alphaTarget(0.3).restart()
+        setTimeout(()=>{this.freeze = false; sim.alphaTarget(0)}, this.animationDuration)
         this.draw(name,field,sim);
         this.update()
         

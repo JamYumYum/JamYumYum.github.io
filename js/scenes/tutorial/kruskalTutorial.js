@@ -39,6 +39,7 @@ const kruskalTutorial = {
         window.addEventListener("resize", this.nrecenter)
 
         d3.select("#infoText").html(this.createMessage(0))
+        this.updateCommand()
         this.next(this.nFirstClick)
     },
     nlogKey : function(e){
@@ -226,7 +227,7 @@ const kruskalTutorial = {
         switch(number){
             case 0:
                 //starting message explain forest and tags
-                return `Kruskal's algorithm tutorial. We start by having a forest of all vertices, 
+                return `Kruskal's algorithm tutorial. We start by having a forest containing all vertices, 
                 with each vertex being in its own connected component, given a color and tag number as ID.`
             case 1:
                 // explain edges selection order, request first click
@@ -285,6 +286,12 @@ const kruskalTutorial = {
         d3.select(".confirm").append("div").classed("confirmText", true).html("Next")
 
         d3.select(".confirm").on("mousedown", v=>{nextFunction(parameter1)})
+    },
+    //command display
+    updateCommand : function(){
+        let content = "Commands Keybind<br>"
+        + "[Esc] Return to Main Menu"
+        d3.select("#command").html(content)
     }
 }
 

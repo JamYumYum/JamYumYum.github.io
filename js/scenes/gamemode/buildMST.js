@@ -216,7 +216,7 @@ const buildMST = {
         let target = buildMST.mode.nameMap.nameMap[buildMST.mode.currentEdge.target.index]
         d3.select("#infoText").html(`<SPAN STYLE="text-decoration:overline; font-weight:bold">
         ${source}${target}
-        </SPAN> added to your tree.`)
+        </SPAN> added to the forest.`)
     },
     nDoNothing : function(){
         let source = buildMST.mode.nameMap.nameMap[buildMST.mode.currentEdge.source.index]

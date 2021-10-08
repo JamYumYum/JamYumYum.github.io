@@ -21,7 +21,7 @@ const ssspTree = {
         document.addEventListener("keydown", ssspTree.nlogKey)
         window.addEventListener("resize", this.nrecenter)
         // UI update
-        d3.select("#infoText").html("Tense edges(red) get relaxed on click. Try to relax all edges with the least amount of clicks!")
+        d3.select("#infoText").html("Tense edges(red) get relaxed on click. Try to relax alledges with the least amount of clicks!")
         this.updateTotal()
         this.updateSelection()
         this.updateCommand()
@@ -55,7 +55,7 @@ const ssspTree = {
         this.totalRelaxations = 0
         this.graph1 = G.mstGraph()
         A.initValue(this.graph1,0)
-        directedMode.setGraph(this.graph1)
+        directedMode.setGraph(this.graph1, 0)       
         directedMode.initiateSimulation(this.name1,this.svg1,this.sim1)
     },
     reset : function(){
