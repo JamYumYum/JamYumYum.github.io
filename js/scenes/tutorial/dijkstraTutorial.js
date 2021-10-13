@@ -4,6 +4,7 @@ import * as G from '../../graphGenerator.js';
 import { sceneManager } from "../sceneManager.js";
 import { mainMenu } from "../mainMenu.js";
 import { svg0UI } from "../../UI/svg0.js";
+import PQueue from '../../ds/pQueue.js'
 
 const dijkstraTutorial = {
     mode : undefined,   //used mode
@@ -16,6 +17,7 @@ const dijkstraTutorial = {
     totalRelaxations : 0, // counter for edge relaxations
     distance : [],
     predecessor : [],
+    pQueue : undefined,
     start : function(){
         this.mode = directedMode
         svg0UI.drawUI(this.mode)
@@ -26,6 +28,7 @@ const dijkstraTutorial = {
         this.totalRelaxations = 0
         this.distance = []
         this.predecessor = []
+        this.pQueue = new PQueue()
         for(let i = 0; i< this.graph1.vertices.length; i++){
             this.distance.push(this.graph1.vertices[i].key)
             this.predecessor.push("-") 
@@ -45,6 +48,7 @@ const dijkstraTutorial = {
             case "Escape":
                 sceneManager.enterQueue(mainMenu)
                 sceneManager.nextScene()
+                 let a= 1
                 break
         }    
     },

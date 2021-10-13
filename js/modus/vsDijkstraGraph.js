@@ -22,18 +22,20 @@ const vsDijkstraGraph = {
     height : 700,
     nodeR1 : 28,
     nodeR2 : 32,
-    nodeColor : "#4845ff",
+    nodeColor : "#6361fd",
     nodeBorderWidth : 2,
+    startNodeBorderWidth : 4,
     nodeBorderColor : "#e7e7e7",
+    startNodeBorderColor : "#fff130",
     arrowSize : 20,
     tenseLinkSize : 10,
-    textSize : 15,
-    tenseLinkColor : "#fc0000",
+    textSize : 17,
+    tenseLinkColor : "#f73030",
     relaxLinkSize : 0,
     relaxLinkColor : "#fff130",
     notSelectedColor : "white",
-    lineSelectedColor : "#fc0000",
-    lineHoverColor : "#fc0000",
+    lineSelectedColor : "#f73030",
+    lineHoverColor : "#f73030",
     lineUnhoverColor : "#fff130",
     lineUnhoverOpacity : 0.25,
     clickboxSize : 15,
@@ -48,6 +50,7 @@ const vsDijkstraGraph = {
     maxWeight : undefined,
     nameMap : undefined,
     freeze : false,
+    startVertex : 0,
     setGraph : function(g){
         this.graph = g
         this.startup = true
@@ -185,7 +188,7 @@ const vsDijkstraGraph = {
         .text(d=> d.key)
         .transition()
         .duration(this.animationDuration)
-        .style("fill", e=>{if(this.ssspHelp.tense(e)){return "red"}else{return "white"}})
+        .style("fill", e=>{if(this.ssspHelp.tense(e)){return "#f73030"}else{return "white"}})
         .attr("x",)
         .attr("y",)
         .attr("x", e => {
@@ -199,6 +202,20 @@ const vsDijkstraGraph = {
             let nOrthogonal = Vector.rotate(normalizeDXDY, 90)
             let tenseOffset = this.ssspHelp.tense(e) ? this.tenseLinkSize-2 : 0;
             return e.source.y + (e.target.y - e.source.y)/2 + nOrthogonal[1]*(this.edgeTextOffset+ (Math.cos(Vector.angleOf([1,0], normalizeDXDY)))*(this.textSize/4)+ tenseOffset)
+        })
+
+        //nodeBorder
+        d3
+        .selectAll("circle.graphNode."+this.svg)
+        .transition()
+        .duration(this.animationDuration)
+        .attr("stroke", v=>{
+            if(v.name == this.startVertex) return this.startNodeBorderColor
+            return this.nodeBorderColor
+        })
+        .attr("stroke-width", v=>{
+            if(v.name == this.startVertex) return this.startNodeBorderWidth
+            return this.nodeBorderWidth
         })
         
     },
@@ -381,7 +398,7 @@ const vsDijkstraGraph = {
         .classed(name,true)
         .attr("pointer-events", "none")
         .attr("text-anchor", "middle")
-        .style("font-family", "Comic Sans MS")
+        .style("font-family", "Lusitana")
         .style("font-size", this.textSize)
         .style("font-weight", "bold")
         .style("fill", "white")
@@ -395,7 +412,7 @@ const vsDijkstraGraph = {
         .classed(name,true)
         .attr("pointer-events", "none")
         .attr("text-anchor", "middle")
-        .style("font-family", "Comic Sans MS")
+        .style("font-family", "Lusitana")
         .style("font-size", this.textSize)
         .style("font-weight", "bold")
         .style("fill", "white")
@@ -409,7 +426,7 @@ const vsDijkstraGraph = {
         .classed(name,true)
         .attr("pointer-events", "none")
         .attr("text-anchor", "middle")
-        .style("font-family", "Comic Sans MS")
+        .style("font-family", "Lusitana")
         .style("font-size", this.textSize)
         .style("font-weight", "bold")
     },

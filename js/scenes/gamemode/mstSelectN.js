@@ -46,7 +46,7 @@ const mstSelectN = {
 
         d3.select("#infoText").html(`Prim's algorithm has done some work. Which are the next 
         <SPAN STYLE="font-weight:bold">
-        ${this.totalMoves} </SPAN>edges Prim's algorithm would add to the tree?`)
+        ${this.totalMoves} </SPAN>edges Prim's algorithm would add to the forest?`)
     },
     nlogKey : function(e){
         mstSelectN.logKey(e)
@@ -62,19 +62,19 @@ const mstSelectN = {
                 break
             case "KeyQ":
                 this.restart()
-                d3.select("#infoText").html("Created new Graph! "+` Now add the next ${this.totalMoves} edges to the tree!`)
+                d3.select("#infoText").html("Created new Graph! "+` Now add the next ${this.totalMoves} edges to the forest!`)
                 break
             case "Digit1":
                 this.selectMode(primMode)
                 d3.select("#infoText").html(`Prim's algorithm has done some work. Which are the next 
                 <SPAN STYLE="font-weight:bold">
-                ${this.totalMoves} </SPAN>edges Prim's algorithm would add to the tree?`)
+                ${this.totalMoves} </SPAN>edges Prim's algorithm would add to the forest?`)
                 break
             case "Digit2":
                 this.selectMode(kruskalMode)
                 d3.select("#infoText").html(`Kruskal's algorithm has done some work. Which are the next 
                 <SPAN STYLE="font-weight:bold">
-                ${this.totalMoves} </SPAN>edges Kruskal's algorithm would add to the tree?`)
+                ${this.totalMoves} </SPAN>edges Kruskal's algorithm would add to the forest?`)
                 break
             case "Escape":
                 sceneManager.enterQueue(mainMenu)

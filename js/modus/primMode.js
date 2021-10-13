@@ -24,19 +24,23 @@ const primMode = {
     nodeR1 : 28,
     nodeR2 : 32,
     nodeColor : "white",
-    nodeSelectedColor : "#4845ff",
+    nodeSelectedColor : "#6361fd",
     nodeBorderWidth : 2,
+    startNodeBorderWidth : 4,
     nodeBorderColor : "#e7e7e7",
-    textSize : 15,
-    lineSelectedColor : "#fc0000",
+    startNodeBorderColor : "#fff130",
+    textSize : 17,
+    lineSelectedColor : "#f73030",
     lineNotSelectedColor : "white",
-    lineHoverColor : "#fc0000",
+    lineHoverColor : "#f73030",
     lineUnhoverColor : "#fff130",
     safeEdgeColor : "#fff130",
     lineUnhoverOpacity : 0.25,
     clickboxSize : 20,
     edgeTextOffset : 15,
     animationDuration : 300,
+    minWeight : undefined,
+    maxWeight : undefined,
     ignore : [],
     selection : [], // selected EDGES objects
     startVertex : undefined,
@@ -52,6 +56,16 @@ const primMode = {
         this.selectedSet = []
         this.nameMap = nodeNameMap
         this.nameMap.map(this.graph.vertices)
+        this.minWeight = this.graph.edges[0].key
+        this.maxWeight = this.graph.edges[0].key
+        for(let i = 0; i < this.graph.edges.length; i++){
+            if(this.minWeight>this.graph.edges[i].key){
+                this.minWeight = this.graph.edges[i].key
+            }
+            if(this.maxWeight<this.graph.edges[i].key){
+                this.maxWeight = this.graph.edges[i].key
+            }
+        }
         this.ignore = []
         this.startVertex = undefined
         for(let i = 0; i<this.graph.edges.length;i++){
@@ -256,6 +270,14 @@ const primMode = {
                 return this.nodeSelectedColor
             }
         })
+        .attr("stroke", v=>{
+            if(v.name == this.startVertex) return this.startNodeBorderColor
+            return this.nodeBorderColor
+        })
+        .attr("stroke-width", v=>{
+            if(v.name == this.startVertex) return this.startNodeBorderWidth
+            return this.nodeBorderWidth
+        })
     },
 
     posCalc : function(){
@@ -295,7 +317,11 @@ const primMode = {
         .append("line")
         .attr('class', 'graphEdge')
         .classed(name, true)
-        .attr("stroke-width", d=> d.key)
+        .attr("stroke-width", d=> {
+            let delta = this.maxWeight - this.minWeight
+            let interval = delta / 11
+            return 1 + Math.floor((d.key-this.minWeight) / interval)
+        })
         .attr("stroke", this.lineNotSelectedColor)
 
         this.linkClickbox = field
@@ -375,7 +401,7 @@ const primMode = {
         .classed(name,true)
         .attr("pointer-events", "none")
         .attr("text-anchor", "middle")
-        .style("font-family", "Comic Sans MS")
+        .style("font-family", "Lusitana")
         .style("font-size", this.textSize)
         .style("font-weight", "bold")
         .style("fill", "black")
@@ -389,7 +415,7 @@ const primMode = {
         .classed(name,true)
         .attr("pointer-events", "none")
         .attr("text-anchor", "middle")
-        .style("font-family", "Comic Sans MS")
+        .style("font-family", "Lusitana")
         .style("font-size", this.textSize)
         .style("font-weight", "bold")
     },

@@ -38,9 +38,11 @@ const kruskalTutorial = {
         document.addEventListener("keydown", kruskalTutorial.nlogKey)
         window.addEventListener("resize", this.nrecenter)
 
-        d3.select("#infoText").html(this.createMessage(0))
+        //d3.select("#infoText").html(this.createMessage(0))
+        d3.select("#infoText").html("Kruskals algorithm tutorial. Connected components are tagged and colorized! Start by clicking on a safe edge!")
         this.updateCommand()
-        this.next(this.nFirstClick)
+        this.updateInfo()
+        //this.next(this.nFirstClick)
     },
     nlogKey : function(e){
         kruskalTutorial.logKey(e)
@@ -89,8 +91,11 @@ const kruskalTutorial = {
     },
     // actions if edge was clicked
     addEdge : function(){
-        if(kruskalMode.selection[kruskalMode.selection.length-1].source.name == this.kruskalData.edgeStep[this.step][0].source
-            && kruskalMode.selection[kruskalMode.selection.length-1].target.name == this.kruskalData.edgeStep[this.step][0].target){
+        let source = kruskalMode.nameMap.nameMap[kruskalMode.currentEdge.source.name]
+        let target = kruskalMode.nameMap.nameMap[kruskalMode.currentEdge.target.name]
+        let edge = `<SPAN STYLE="text-decoration:overline; font-weight:bold">${source}${target}</SPAN>`
+        if(kruskalMode.goodMove()){
+            /*
             //minEdge clicked
             if(this.step ==0){
                 //first time adding
@@ -103,14 +108,22 @@ const kruskalTutorial = {
                 d3.select("#infoText").html(kruskalTutorial.createMessage(8))
                 this.next(this.nSuccess)
             }
-            kruskalTutorial.updateSelection(true)
+            */
+            //kruskalTutorial.updateSelection(true)
+            d3.select("#infoText").html(`${edge} is a safe edge! Select the next safe edge!`)
+            this.step+=1
+            if(kruskalMode.selection.length == this.graph.vertices.length -1){
+                d3.select("#infoText").html(`${edge} is a safe edge! Every vertex is now in the same connected component and you have built a MST, Kruskal is now done! Press [Esc] to return to the main menu.`)
+
+            }
         }
         else{
             //nothing should happen here, so restore edge to default, rquest to click on minEDge
-            d3.select("#infoText").html(kruskalTutorial.createMessage(7))
+            //d3.select("#infoText").html(kruskalTutorial.createMessage(7))
+            d3.select("#infoText").html(`${edge} wouldn't create a cycle, but it is not the edge Kruskal is looking for!`)
             kruskalMode.undo()
             //Lock svg 
-            this.lock()
+            //this.lock()
         }
     },
     nIgnore : function(){
@@ -119,6 +132,7 @@ const kruskalTutorial = {
     ignore : function(){
         console.log(this.kruskalData)
         console.log(this.step)
+        /*
         if(kruskalMode.currentEdge.source.index == this.kruskalData.edgeStep[this.step][0].source
             && kruskalMode.currentEdge.target.index == this.kruskalData.edgeStep[this.step][0].target){
             //minEdge clicked
@@ -128,14 +142,19 @@ const kruskalTutorial = {
             kruskalTutorial.updateSelection(true)
         }
         else{
-            console.log("flag1234")
+        */
             //nothing should happen here, so restore edge to default
-            d3.select("#infoText").html(kruskalTutorial.createMessage(7))
+        if(kruskalMode.selection.length == this.graph.vertices.length -1) return
+            //d3.select("#infoText").html(kruskalTutorial.createMessage(7))
+            let source = kruskalMode.nameMap.nameMap[kruskalMode.currentEdge.source.name]
+            let target = kruskalMode.nameMap.nameMap[kruskalMode.currentEdge.target.name]
+            let edge = `<SPAN STYLE="text-decoration:overline; font-weight:bold">${source}${target}</SPAN>`
+            d3.select("#infoText").html(`${edge} is not a safe edge, try another edge!`)
             kruskalMode.ignore[kruskalMode.currentEdge.index] = false
-            //primMode.update()
+            //kruskalMode.update()
             //Lock svg 
-            this.lock()
-        }
+            //this.lock()
+        //}
     },
     // chaining steps
         //start
@@ -292,6 +311,31 @@ const kruskalTutorial = {
         let content = "Commands Keybind<br>"
         + "[Esc] Return to Main Menu"
         d3.select("#command").html(content)
+    },
+    //update tutorial info
+    updateInfo : function(){
+        d3.select("#grid1").append("div").attr("id", "tutorialInfo")
+        let content = `<SPANN STYLE="font-weight:bold">Kruskals algorithm tutorial</SPANN><br><br>
+        Kruskal is building a MST by adding safe edges to an empty forest. 
+        <br>
+        <br>
+        Kruskal creates an empty forest with all vertices in their own connected component, then he checks the 
+        edges in ascending order,
+        <br>
+        <br>
+        if the current edge has its vertices in different connected components, then 
+        it is called a 
+        <SPANN STYLE="font-weight:bold">safe edge</SPANN>. 
+        <br>
+        <br>
+        Adding a safe edge will merge the connected components, which contain its vertices.
+        <br>
+        <br>
+        Kruskal will continuously add safe edges. 
+        <br>
+        <br>
+        Kruskal is done, if all vertices are in the same connected component.`
+        d3.select("#tutorialInfo").html(content)
     }
 }
 

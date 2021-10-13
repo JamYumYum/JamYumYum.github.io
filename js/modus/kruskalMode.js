@@ -1,4 +1,3 @@
-import * as Algo from '../algo.js';
 import * as Vector from '../2dVector.js'
 import * as Color from '../tools/colorGenerator.js'
 import UnionFind from '../ds/unionFind.js';
@@ -15,13 +14,8 @@ const kruskalMode = {
     linkClickbox : undefined,
     tenseLink : undefined,
     linkDirection : undefined,
-    primData : undefined,
-    kruskalData : undefined,
-    dijkstraData : undefined,
     svg1 : undefined,
-    svg2 : undefined,
     sim1 : undefined,
-    sim2 : undefined,
     width : 1200,
     height : 700,
     nodeR1 : 28,
@@ -29,18 +23,17 @@ const kruskalMode = {
     nodeColor : "#4845ff",
     nodeBorderWidth : 2,
     nodeBorderColor : "#e7e7e7",
-    textSize : 15,
-    tenseLinkColor : "#fc0000",
-    relaxLinkSize : 0,
-    relaxLinkColor : "#fff130",
-    lineSelectedColor : "#fc0000",
+    textSize : 17,
+    lineSelectedColor : "#f73030",
     lineNotSelectedColor: "white",
-    lineHoverColor : "#fc0000",
+    lineHoverColor : "#f73030",
     lineUnhoverColor : "white",
     lineUnhoverOpacity : 0.25,
     clickboxSize : 20, // hover line and extra easy clickable and invisible
     edgeTextOffset : 15,
     animationDuration : 300, // transition duration
+    minWeight : undefined,
+    maxWeight : undefined,
     ignore : [],   // when edge source and target cannot union, then it will be marked here, reset if union possible
     selection : [], // selected edges
     colors : undefined, // different color for each node tag
@@ -57,6 +50,16 @@ const kruskalMode = {
         this.forest = new UnionFind(this.graph.vertices)
         this.nameMap = nodeNameMap
         this.nameMap.map(this.graph.vertices)
+        this.minWeight = this.graph.edges[0].key
+        this.maxWeight = this.graph.edges[0].key
+        for(let i = 0; i < this.graph.edges.length; i++){
+            if(this.minWeight>this.graph.edges[i].key){
+                this.minWeight = this.graph.edges[i].key
+            }
+            if(this.maxWeight<this.graph.edges[i].key){
+                this.maxWeight = this.graph.edges[i].key
+            }
+        }
         this.ignore = []
         for(let i = 0; i<this.graph.edges.length;i++){
             this.ignore.push(false)
@@ -244,7 +247,11 @@ const kruskalMode = {
         .append("line")
         .attr('class', 'graphEdge')
         .classed(name, true)
-        .attr("stroke-width", d=> d.key)
+        .attr("stroke-width", d=> {
+            let delta = this.maxWeight - this.minWeight
+            let interval = delta / 11
+            return 1 + Math.floor((d.key-this.minWeight) / interval)
+        })
         .attr("stroke", this.lineNotSelectedColor)
 
         this.linkClickbox = field
@@ -324,7 +331,7 @@ const kruskalMode = {
         .classed(name,true)
         .attr("pointer-events", "none")
         .attr("text-anchor", "middle")
-        .style("font-family", "Comic Sans MS")
+        .style("font-family", "Lusitana")
         .style("font-size", this.textSize)
         .style("font-weight", "bold")
         .style("fill", "black")
@@ -338,7 +345,7 @@ const kruskalMode = {
         .classed(name,true)
         .attr("pointer-events", "none")
         .attr("text-anchor", "middle")
-        .style("font-family", "Comic Sans MS")
+        .style("font-family", "Lusitana")
         .style("font-size", this.textSize)
         .style("font-weight", "bold")
         .style("fill", "black")
@@ -352,7 +359,7 @@ const kruskalMode = {
         .classed(name,true)
         .attr("pointer-events", "none")
         .attr("text-anchor", "middle")
-        .style("font-family", "Comic Sans MS")
+        .style("font-family", "Lusitana")
         .style("font-size", this.textSize)
         .style("font-weight", "bold")
     },

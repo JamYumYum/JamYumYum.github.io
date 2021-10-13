@@ -69,11 +69,11 @@ const buildMST = {
                 break
             case "Digit1":
                 this.selectMode(primMode)
-                d3.select("#infoText").html("Showing Safe Edges. Select a starting vertex!")
+                d3.select("#infoText").html("Showing Prims Safe Edges support. Select a starting vertex!")
                 break
             case "Digit2":
                 this.selectMode(kruskalMode)
-                d3.select("#infoText").html("Showing Color support.")
+                d3.select("#infoText").html("Showing Kruskals Color support.")
                 break
             case "Digit3":
                 this.selectMode(undirectedMode)
@@ -132,6 +132,7 @@ const buildMST = {
         this.updateCommand()
     },
     reset(){
+        this.mode.freeze = false
         this.mode.reset()
         this.edgeSelection = []
         this.totalWeight = 0
@@ -145,6 +146,7 @@ const buildMST = {
         this.updateSelection()
     },
     undo(){
+        this.mode.freeze = false
         if(this.edgeSelection.length != 0){
             this.mode.undo()
             let e = this.edgeSelection.pop()
@@ -181,7 +183,7 @@ const buildMST = {
         this.edgeSelection.push(this.mode.selection[this.mode.selection.length-1])
         this.totalWeight += this.edgeSelection[this.edgeSelection.length-1].key
         if(this.edgeSelection.length === this.totalMoves){
-            
+            this.mode.freeze = true
             if(this.totalWeight > this.minWeight){
                 this.lose()
             }

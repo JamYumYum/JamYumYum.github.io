@@ -25,18 +25,20 @@ const directedMode = {
     height : 700,
     nodeR1 : 28,
     nodeR2 : 32,
-    nodeColor : "#4845ff",
+    nodeColor : "#6361fd",
     nodeBorderWidth : 2,
+    startNodeBorderWidth : 4,
     nodeBorderColor : "#e7e7e7",
+    startNodeBorderColor : "#fff130",
     arrowSize : 20,
     tenseLinkSize : 10,
-    textSize : 15,
-    tenseLinkColor : "#fc0000",
+    textSize : 17,
+    tenseLinkColor : "#f73030",
     relaxLinkSize : 0,
     relaxLinkColor : "#fff130",
     notSelectedColor : "white",
-    lineSelectedColor : "#fc0000",
-    lineHoverColor : "#fc0000",
+    lineSelectedColor : "#f73030",
+    lineHoverColor : "#f73030",
     lineUnhoverColor : "#fff130",
     lineUnhoverOpacity : 0.25,
     clickboxSize : 15,
@@ -225,7 +227,7 @@ const directedMode = {
         .text(d=> d.key)
         .transition()
         .duration(this.animationDuration)
-        .style("fill", e=>{if(this.ssspHelp.tense(e)){return "red"}else{return "white"}})
+        .style("fill", e=>{if(this.ssspHelp.tense(e)){return "#f73030"}else{return "white"}})
         .attr("x", e => {
             let normalizeDXDY = Vector.normalize([e.target.x-e.source.x,e.target.y-e.source.y])
             let nOrthogonal = Vector.rotate(normalizeDXDY, 90)
@@ -239,6 +241,19 @@ const directedMode = {
             return e.source.y + (e.target.y - e.source.y)/2 + nOrthogonal[1]*(this.edgeTextOffset+ (Math.cos(Vector.angleOf([1,0], normalizeDXDY)))*(this.textSize/4)+ tenseOffset)
         })
         console.log("update done")
+        //nodeBorder
+        d3
+        .selectAll("circle.graphNode."+this.svg)
+        .transition()
+        .duration(this.animationDuration)
+        .attr("stroke", v=>{
+            if(v.name == this.startVertex) return this.startNodeBorderColor
+            return this.nodeBorderColor
+        })
+        .attr("stroke-width", v=>{
+            if(v.name == this.startVertex) return this.startNodeBorderWidth
+            return this.nodeBorderWidth
+        })
     
     },
 
@@ -424,7 +439,7 @@ const directedMode = {
         .classed(name,true)
         .attr("pointer-events", "none")
         .attr("text-anchor", "middle")
-        .style("font-family", "Comic Sans MS")
+        .style("font-family", "Lusitana")
         .style("font-size", this.textSize)
         .style("font-weight", "bold")
         .style("fill", "white")
@@ -438,7 +453,7 @@ const directedMode = {
         .classed(name,true)
         .attr("pointer-events", "none")
         .attr("text-anchor", "middle")
-        .style("font-family", "Comic Sans MS")
+        .style("font-family", "Lusitana")
         .style("font-size", this.textSize)
         .style("font-weight", "bold")
         .style("fill", "white")
@@ -453,7 +468,7 @@ const directedMode = {
         .attr("fill","white")
         .attr("pointer-events", "none")
         .attr("text-anchor", "middle")
-        .style("font-family", "Comic Sans MS")
+        .style("font-family", "Lusitana")
         .style("font-size", this.textSize)
         .style("font-weight", "bold")
     },
@@ -485,7 +500,7 @@ const directedMode = {
             .force("center", d3.forceCenter(this.width/2,this.height/2))
             .force('xAxis', d3.forceX(this.width / 2).strength(0.1))
             .force('yAxis', d3.forceY(this.width / 2).strength(0.1))
-            .force('collide', d3.forceCollide(40).iterations(6))
+            .force('collide', d3.forceCollide(50).iterations(6))
             .on('tick', () => {
                 this.posCalc()
                 if(this.startup){

@@ -34,7 +34,9 @@ const fordTutorial = {
         window.addEventListener("resize", this.nrecenter)
         
         this.updateCommand()
-        d3.select("#infoText").html("Ford's algorithm calculates the minimum distance paths from a single source to every other vertex. Start by clicking on a start Vertex.")
+        this.updateInfo()
+        //d3.select("#infoText").html("Ford's algorithm calculates the minimum distance paths from a single source to every other vertex. Start by clicking on a start Vertex.")
+        d3.select("#infoText").html("Ford's algorithm tutorial. Start by selecting a vertex. Click on any one.")
     },
     nlogKey : function(e){
         fordTutorial.logKey(e)
@@ -76,12 +78,12 @@ const fordTutorial = {
         if(fordTutorial.totalRelaxations == 0){
             // first relaxation
             d3.select("#infoText").html(`${edge} has been relaxed, which means you updated the distance of 
-            ${target} as dist(${target}) = dist(${source}) + weight(${edge}). ${edge} is now marked in yellow, 
-            showing that ${source} is now the predecessor of ${target}.`)
+            ${target}! ${edge} is now marked in yellow, 
+            showing that ${source} is now the predecessor of ${target}. Now relax more edges.`)
         }
         else{
-            d3.select("#infoText").html(`${edge} has been relaxed, dist(${target}) = dist(${source}) + weight(${edge}), 
-            pred(${target}) = ${source}.`)
+            d3.select("#infoText").html(`${edge} relaxed, updated the distance of ${target}, 
+            ${source} is now the predecessor of ${target}. Relax more Edges!`)
         }
         fordTutorial.predecessor[directedMode.currentEdge.target.name] = directedMode.currentEdge.source.name
         fordTutorial.distance[directedMode.currentEdge.target.name] = directedMode.ssspHelp.distance[directedMode.currentEdge.target.name]
@@ -89,17 +91,19 @@ const fordTutorial = {
 
         if(directedMode.totalTenseEdges == 0){
             // finish, no tense edges
-            fordTutorial.next(fordTutorial.nFinish)
+            //fordTutorial.next(fordTutorial.nFinish)
+            d3.select("#infoText").html(`${edge} relaxed, updated the distance of ${target}, 
+            ${source} is now the predecessor of ${target}. No more tense edges, Ford is done! Press [Esc] to return.`)
             return
         }
-        fordTutorial.next(fordTutorial.nNext)
+        //fordTutorial.next(fordTutorial.nNext)
         fordTutorial.totalRelaxations += 1
     },
 
     nNodeClicked : function(){
         d3.select("#infoText").html(`You chose <SPAN STYLE="font-weight:bold">${directedMode.nameMap.nameMap[directedMode.currentVertex.name]}</SPAN> 
-        as starting vertex. Initial distances have been generated!`)
-        fordTutorial.next(fordTutorial.nExplainTense)
+        as starting vertex. Initial distances have been generated! Tense edges are red and swollen, now click on a tense edge!`)
+        //fordTutorial.next(fordTutorial.nExplainTense)
         
         for(let i = 0; i< fordTutorial.graph1.vertices.length; i++){
             fordTutorial.distance[i] = fordTutorial.graph1.vertices[i].key
@@ -182,6 +186,30 @@ const fordTutorial = {
         let content = "Commands Keybind<br>"
         + "[Esc] Return to Main Menu"
         d3.select("#command").html(content)
+    },
+    //update tutorial info
+    updateInfo : function(){
+        d3.select("#grid1").append("div").attr("id", "tutorialInfo")
+        let content = `<SPANN STYLE="font-weight:bold">Fords algorithm tutorial</SPANN><br><br>
+        Start by choosing the single source vertex and initiating all distances to it.
+        Ford is building a SSSP-tree by relaxing all tense edges.
+        <br>
+        <br>
+        If an edge has a head vertex with a higher distance than its tail vertex distance in addition to its own edge
+        weight, then it is a <SPANN STYLE="font-weight:bold">tense</SPANN> edge.
+        <br>
+        <br>
+        If a tense edge gets <SPANN STYLE="font-weight:bold">relaxed</SPANN>, then it updates its head vertex distance 
+        to the sum of its tail vertex distance and its own weight, additionaly the predecessor of the head vertex is now the 
+        tail vertex. 
+        <br>
+        <br>
+        Ford relaxes tense edges, as long as there are any. 
+        <br>
+        <br>
+        Ford is done, if there are no more tense edges.
+        `
+        d3.select("#tutorialInfo").html(content)
     }
 }
 

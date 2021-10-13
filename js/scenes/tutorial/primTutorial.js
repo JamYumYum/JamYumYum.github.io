@@ -44,6 +44,7 @@ const primTutorial = {
         this.initMessages()
         d3.select("#infoText").html(this.messages[0])
         this.updateCommand()
+        this.updateInfo()
     },
     nlogKey : function(e){
         primTutorial.logKey(e)
@@ -103,10 +104,12 @@ const primTutorial = {
     },
     nNodeClicked : function(){
         primTutorial.primData = A.prim(primTutorial.algoGraph, primMode.startVertex)
-        d3.select("#infoText").html(primTutorial.createMessage(1))
+        //d3.select("#infoText").html(primTutorial.createMessage(1))
         console.log(primTutorial.primData)
-        primTutorial.updateSelection()
-        primTutorial.next(primTutorial.nSafeEdgesMessage)
+        //primTutorial.updateSelection()
+        //primTutorial.next(primTutorial.nSafeEdgesMessage)
+
+        d3.select("#infoText").html("Prim will now start the main loop, click on a safe edge!")
     },
     nAddEdge : function(){
         primTutorial.addEdge()
@@ -115,9 +118,12 @@ const primTutorial = {
     addEdge : function(){
         //console.log(this.primData.pQueueStep[this.step][1])
         //console.log(primMode.selection[primMode.selection.length-1])
-        if(primMode.selection[primMode.selection.length-1].source.name == this.primData.pQueueStep[this.step][1].source
-            && primMode.selection[primMode.selection.length-1].target.name == this.primData.pQueueStep[this.step][1].target){
+        let source = primMode.nameMap.nameMap[primMode.currentEdge.source.name]
+        let target = primMode.nameMap.nameMap[primMode.currentEdge.target.name]
+        let edge = `<SPAN STYLE="text-decoration:overline; font-weight:bold">${source}${target}</SPAN>`
+        if(primMode.goodMove()){
             // minEdge clicked
+            /*
             if(this.step == 0){
                 d3.select("#infoText").html(primTutorial.createMessage(4))
                 // update pQueue display
@@ -130,15 +136,22 @@ const primTutorial = {
                 this.updateSelection(true)
                 this.next(primTutorial.nAddNeighbours, false)
             }
-
+            */
+            d3.select("#infoText").html(`${edge} is a safe edge! Select the next safe edge!`)
+            //this.updateSelection(true)
             this.step += 1
+            if(primMode.selection.length == this.graph.vertices.length -1){
+                d3.select("#infoText").html(`${edge} is a safe edge! Every vertex is now connected and you have built a MST, Prim is now done! Press [Esc] to return to the main menu.`)
+
+            }
         }
         else{
             //nothing should happen here, so restore edge to default, rquest to click on minEDge
-            d3.select("#infoText").html(primTutorial.createMessage(10))
+            //d3.select("#infoText").html(primTutorial.createMessage(10))
+            d3.select("#infoText").html(`${edge} wouldn't create a cycle, but it is not the edge Prim is looking for!`)
             primMode.undo()
             //Lock svg 
-            this.lock()
+            //this.lock()
         }
     },
     nIgnore : function(){
@@ -147,6 +160,8 @@ const primTutorial = {
     ignore : function(){
         console.log(this.primData.pQueueStep[this.step][1])
         console.log(primMode.selection[primMode.selection.length-1])
+
+        /*
         if(primMode.currentEdge.source.name == this.primData.pQueueStep[this.step][1].source
             && primMode.currentEdge.target.name == this.primData.pQueueStep[this.step][1].target){
             // minEdge clicked
@@ -158,22 +173,32 @@ const primTutorial = {
             this.step += 1
             
         }
-        else{
+        */
+        //else{
             //nothing should happen here, so restore edge to default
-            d3.select("#infoText").html(this.createMessage(10))
-            primMode.ignore[primMode.currentEdge.index] = false
+            //d3.select("#infoText").html(this.createMessage(10))
+        if(primMode.selection.length == this.graph.vertices.length -1) return
+        let source = primMode.nameMap.nameMap[primMode.currentEdge.source.name]
+        let target = primMode.nameMap.nameMap[primMode.currentEdge.target.name]
+        let edge = `<SPAN STYLE="text-decoration:overline; font-weight:bold">${source}${target}</SPAN>`
+        d3.select("#infoText").html(`${edge} is not a safe edge, try another edge!`)
+        primMode.ignore[primMode.currentEdge.index] = false
             //primMode.update()
             //Lock svg 
-            this.lock()
-        }
+            //this.lock()
+        //}
     },
     nIgnore2 : function(){
         primTutorial.ignore2()
     },
     ignore2 : function(){
         //Lock svg 
-        this.lock()
-        d3.select("#infoText").html(this.createMessage(10))
+        //this.lock()
+        //d3.select("#infoText").html(this.createMessage(10))
+        let source = primMode.nameMap.nameMap[primMode.currentEdge.source.name]
+        let target = primMode.nameMap.nameMap[primMode.currentEdge.target.name]
+        let edge = `<SPAN STYLE="text-decoration:overline; font-weight:bold">${source}${target}</SPAN>`
+        d3.select("#infoText").html(`${edge} is undecided, we don't know if it is safe!`)
     },
 
     //chaining steps after adding minEdge, showing priority queue content
@@ -404,6 +429,30 @@ const primTutorial = {
         let content = "Commands Keybind<br>"
         + "[Esc] Return to Main Menu"
         d3.select("#command").html(content)
+    },
+    //update tutorial info
+    updateInfo : function(){
+        d3.select("#grid1").append("div").attr("id", "tutorialInfo")
+        let content = `<SPANN STYLE="font-weight:bold">Prims algorithm tutorial</SPANN><br><br>
+        Prim is building a MST by adding safe edges to an empty forest. 
+        <br>
+        <br>
+        Prim starts by selecting a startvertex and adding it to a set S, 
+        <br>
+        <br>
+        any edge with exactly one vertex in S can be added to the forest without creating a cycle, 
+        if such an edge is also the least heavy edge among those edges, it is called a 
+        <SPANN STYLE="font-weight:bold">safe edge</SPANN>. 
+        <br>
+        <br>
+        Adding a safe edge to the forest also adds the new vertex to S. 
+        <br>
+        <br>
+        Prim will continuously add safe edges.
+        <br>
+        <br>
+        Prim is done, if all vertices are in S.`
+        d3.select("#tutorialInfo").html(content)
     }
 }
 

@@ -1,8 +1,8 @@
 body{
-    background-color: #2e2e2e;
+    background-color: #ffffff;
 }
 svg{
-    background-color: #2e2e2e;
+    background-color: #2c2c2c;
     position: relative;
     left: 0px;
     top: 0px;
@@ -11,42 +11,108 @@ svg{
 svg text{
     user-select: none;
 }
-
-line.graphEdge2.nonhover{
-    opacity: 0.25;
+.mainMenu{
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(10, 1fr) ;
+    width: 100vw;
+    height: 100vh;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: #2c2c2c;
+}
+.title{
+    grid-column: 2/3;
+    grid-row: 1/2;
+    padding: 10px;
+    font-size: 2vw;
+    font-family: 'Lusitana';
+    font-weight: bolder;
+    overflow: auto;
+    color:white;
+    z-index: 2;
+    text-align: center;
+}
+.press1{
+    grid-column: 2/3;
+    grid-row: 3/4;
+    padding: 10px;
+    font-size: 1.5vw;
+    font-family: 'Lusitana';
+    font-weight: bold;
+    overflow: auto;
+    color:white;
+    transform: translateX(15%);
+}
+.press2{
+    grid-column: 2/3;
+    grid-row: 4/5;
+    padding: 10px;
+    font-size: 1.5vw;
+    font-family: 'Lusitana';
+    font-weight: bold;
+    overflow: auto;
+    color:white;
+    transform: translateX(15%);
+}
+.press3{
+    grid-column: 2/3;
+    grid-row: 5/6;
+    padding: 10px;
+    font-size: 1.5vw;
+    font-family: 'Lusitana';
+    font-weight: bold;
+    overflow: auto;
+    color:white;
+    transform: translateX(15%);
+}
+.press4{
+    grid-column: 2/3;
+    grid-row: 6/7;
+    padding: 10px;
+    font-size: 1.5vw;
+    font-family: 'Lusitana';
+    font-weight: bold;
+    overflow: auto;
+    color:white;
+    transform: translateX(15%);
+}
+.press5{
+    grid-column: 2/3;
+    grid-row: 7/8;
+    padding: 10px;
+    font-size: 1.5vw;
+    font-family: 'Lusitana';
+    font-weight: bold;
+    overflow: auto;
+    color:white;
+    transform: translateX(15%);
+}
+.press6{
+    grid-column: 2/3;
+    grid-row: 8/9;
+    padding: 10px;
+    font-size: 1.5vw;
+    font-family: 'Lusitana';
+    font-weight: bold;
+    overflow: auto;
+    color:white;
+    transform: translateX(15%);
+}
+.press7{
+    grid-column: 2/3;
+    grid-row: 9/10;
+    padding: 10px;
+    font-size: 1.5vw;
+    font-family: 'Lusitana';
+    font-weight: bold;
+    overflow: auto;
+    color:white;
+    transform: translateX(15%);
 }
 
-line.graphEdge2.hover{
-    stroke: #fc0000;
-    stroke-width: 8px;
-}
 
-line.graphEdge2.selected{
-    stroke: #fc0000;
-}
-
-line.graphEdge2{
-    stroke: #fff130;
-    stroke-width: 5px;
-    transition: stroke-width 0.3s, opacity 0.3s, stroke 0.3s;
-}
-line.graphEdge2.directed.tense{
-    stroke:#fc0000;
-}
-circle.graphNode2{
-    fill: #4845ff;
-    stroke: #e7e7e7;
-    stroke-width: 4px;
-    transition: r 0.3s;
-}
-/*
-.svg0{
-
-   
-}
-*/
-
-/*grid2 for tutorial*/
 #grid2{
     display: grid;
     grid-template-columns: repeat(9, 1fr); 
@@ -63,7 +129,6 @@ circle.graphNode2{
     display: grid;
     grid-template-columns: repeat(9, 1fr);
     grid-template-rows: repeat(6, 1fr) ;
-    grid-gap: 5px;
     width: 100vw;
     height: 100vh;
     position: absolute;
@@ -76,50 +141,63 @@ circle.graphNode2{
 }
 /*used by grid1, grid2 */
 #svg0{
-    grid-column: 1/7;
-    grid-row: 1/5;
+    grid-column: 1/8;
+    grid-row: 1/7;
+    background-color: #2c2c2c;
 }
 #infoText{
-    grid-column: 1/5;
-    grid-row: 5/7;
-    background-color:#7c7c7c;
+    grid-column: 1/8;
+    grid-row: 6/7;
     padding: 10px;
-    border: #202020 solid 5px;
-    font-size: 3vh;
-    font-family: "Comic Sans MS";
+    font-size: 2vw;
+    font-family: 'Lusitana';
     overflow: auto;
+    color:white;
+    z-index: 2;
+    text-align: center;
 }
 #total{
-    grid-column: 5/7;
-    grid-row: 5/7;
-    background-color:#7c7c7c;
+    grid-column: 4/5;
+    grid-row: 1;
+    opacity: 100%;
     padding: 10px;
-    border: #202020 solid 5px;
     font-size: 2vw;
-    font-family: "Comic Sans MS";
+    font-family: "Lusitana";
+    text-align: center;
+    color : white;
+    overflow: auto;
+    z-index: 2;
+}
+#selection{
+    grid-column: 8/10;
+    grid-row: 1/6;
+    background-color:#ffffff;
+    padding: 10px;
+    font-size: 2vh;
+    font-family: "Lusitana";
     text-align: center;
     overflow: auto;
 }
-#selection{
-    grid-column: 7/10;
-    grid-row: 1/5;
-    background-color:#7c7c7c;
-    padding: 10px;
-    border: #202020 solid 5px;
-    font-size: 2vh;
-    font-family: "Comic Sans MS";
-    text-align: center;
+#tutorialInfo{
+    grid-column: 8/10;
+    grid-row: 1/6;
+    background-color:#ffffff;
+    padding: 0.5vw;
+    font-size: 1.4vw;
+    font-family: "Lusitana";
     overflow: auto;
 }
 #command{
-    grid-column: 7/10;
-    grid-row: 5/7;
-    background-color:#7c7c7c;
+    grid-column: 8/10;
+    grid-row: 6/7;
+    background-color:#ffffff;
     padding: 10px;
-    border: #202020 solid 5px;
     font-size: 1.2vw;
-    font-family: "Comic Sans MS";
+    font-family: "Lusitana";
     overflow: auto;
+    position: absolute;
+    bottom: 0;
+    left: 0;
 }
 .lock{
     background-color: #202020;
@@ -185,64 +263,65 @@ circle.graphNode2{
 /*used by grid3*/
 #svg1{
     grid-column: 1/7;
-    grid-row: 1/5;
+    grid-row: 1/6;
     z-index: 1;
 }
 #svg2{
     grid-column: 7/13;
-    grid-row: 1/5;
+    grid-row: 1/6;
     z-index: 1;
 }
 #infoText2{
-    grid-column: 1/4;
-    grid-row: 5/7;
-    background-color:#7c7c7c;
+    grid-column: 1/11;
+    grid-row: 6/7;
+    background-color:#ffffff;
     padding: 10px;
-    border: #202020 solid 5px;
     font-size: 3vh;
-    font-family: "Comic Sans MS";
+    font-family: "Lusitana";
     overflow: auto;
+    text-align: center;
 }
 #total2{
     grid-column: 6/8;
     grid-row: 1;
     z-index: 2;
-    background-color:#7c7c7c;
+    background-color:#ffffff;
     padding: 10px;
-    border: #202020 solid 5px;
     font-size: 1.5vw;
-    font-family: "Comic Sans MS";
+    font-family: "Lusitana";
     text-align: center;
     overflow: auto;
 }
 #selection2{
     grid-column: 4/10;
     grid-row: 5/7;
-    background-color:#7c7c7c;
+    background-color:#ffffff;
     padding: 10px;
-    border: #202020 solid 5px;
     font-size: 2vh;
-    font-family: "Comic Sans MS";
+    font-family: "Lusitana";
     text-align: center;
     overflow: auto;
+    visibility: hidden;
 }
 #command2{
-    grid-column: 10/13;
+    grid-column: 11/13;
     grid-row: 5/7;
-    background-color:#7c7c7c;
+    background-color:#ffffff;
     padding: 10px;
-    border: #202020 solid 5px;
     font-size: 1.2vw;
-    font-family: "Comic Sans MS";
+    font-family: "Lusitana";
     overflow: auto;
+    position: absolute;
+    bottom: 0;
+    left: 0;
 }
 
 /*used by  */
 .svg1{
-    background-color: #4d4d4d;
+    background-color:#2c2c2c;
 }
 .svg2{
-    background-color: #202020;
+    background-color: #181818;
 }
 
 .noselect {

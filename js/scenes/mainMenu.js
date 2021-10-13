@@ -17,19 +17,19 @@ const mainMenu = {
     logKey : function(e){
         console.log(e)
         switch(e.code){
-            case "Digit5":
+            case "Digit4":
                 sceneManager.enterQueue(buildMST)
                 sceneManager.nextScene()
                 break
-            case "Digit6":
+            case "Digit5":
                 sceneManager.enterQueue(mstSelectN)
                 sceneManager.nextScene()
                 break
-            case "Digit7":
+            case "Digit6":
                 sceneManager.enterQueue(ssspTree)
                 sceneManager.nextScene()
                 break
-            case "Digit8":
+            case "Digit7":
                 sceneManager.enterQueue(vsDijkstra)
                 sceneManager.nextScene()
                 break
@@ -49,13 +49,15 @@ const mainMenu = {
     },
     drawUI: function(){
         document.addEventListener("keydown", this.nlogKey)
-        d3.select("body").append("div").html("press 1 for prim tutorial")
-        d3.select("body").append("div").html("press 2 for kruskal tutorial")
-        d3.select("body").append("div").html("press 3 for ford tutorial")
-        d3.select("body").append("div").html("press 5 for game build mst")
-        d3.select("body").append("div").html("press 6 for game select like prim/kruskal")
-        d3.select("body").append("div").html("press 7 for game build sssp tree")
-        d3.select("body").append("div").html("press 8 for game vs dijkstra")
+        let grid = d3.select("body").append("div").classed("mainMenu", true)
+        grid.append("div").classed("title",true).html("Visualization: MST & SSSP")
+        grid.append("div").classed("press1",true).html("Press 1 for prim tutorial")
+        grid.append("div").classed("press2",true).html("Press 2 for kruskal tutorial")
+        grid.append("div").classed("press3",true).html("Press 3 for ford tutorial")
+        grid.append("div").classed("press4",true).html("Press 4 for game build mst")
+        grid.append("div").classed("press5",true).html("Press 5 for game select like prim/kruskal")
+        grid.append("div").classed("press6",true).html("Press 6 for game build sssp tree")
+        grid.append("div").classed("press7",true).html("Press 7 for game vs dijkstra")
     },
     exit: function(){
         console.log("called exit")
