@@ -6,7 +6,6 @@ const svg12UI = {
         grid.append("div").attr("id", "svg1")
         grid.append("div").attr("id", "svg2")
         grid.append("div").attr("id","infoText2")
-        grid.append("div").attr("id","selection2")
         grid.append("div").attr("id","command2")
         grid.append("div").attr("id","total2")
 

@@ -1,4 +1,4 @@
-import PQueue from './ds/pQueue.js';
+import PQueue from '../ds/pQueue.js';
 /**
  * Calculates MST on given graph using prim's algorithm, additional information for each step given for, vertices visited, edges for MST selected, priority queue status will be returned.
  * @param {*} graph 

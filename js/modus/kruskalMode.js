@@ -1,4 +1,4 @@
-import * as Vector from '../2dVector.js'
+import * as Vector from '../tools/2dVector.js'
 import * as Color from '../tools/colorGenerator.js'
 import UnionFind from '../ds/unionFind.js';
 import { customEvent } from '../events/customEvent.js';
@@ -89,18 +89,16 @@ const kruskalMode = {
         this.update()
     },
     lineHover : function(v,name){
-        //TODO
         d3.selectAll("line.clickbox."+name).filter(d=> v.index===d.index)
         .attr("opacity", 0.5)
     },
 
     lineUnhover : function(name){
-        //TODO
         d3.selectAll("line.clickbox."+name)
         .attr("opacity", 0)
     },
     goodMove : function(v){
-        //TODO good move, if selected edge is a safe edge and has min weight
+        //good move, if selected edge is a safe edge and has min weight
         let recentEdge = this.selection[this.selection.length-1]
         let forestState = this.forest.stateMemory[this.forest.stateMemory.length-1]
         for(let i = 0; i<this.graph.edges.length; i++){
@@ -136,7 +134,6 @@ const kruskalMode = {
             console.log(this.currentEdge)
         })
         this.update()
-        //TODO not done yet
     },
 
     update : function(){
@@ -277,17 +274,12 @@ const kruskalMode = {
         .classed(name,true)
         .attr("r", d=> this.nodeR1)
         .attr("fill", this.nodeColor)
-        .attr("stroke-width", this.nodeBorderWidth)
-        .attr("stroke", this.nodeBorderColor)
         .on("mouseover", v=>{
             if(this.freeze){return}
             d3
             .selectAll("circle.graphNode."+name)
             .filter(d=> v.index === d.index)
             .classed("hover", true)
-            .transition()
-            .duration(this.animationDuration)
-            .attr("r", this.nodeR2)
         })
         .on("mouseout", v=>{
             if(this.freeze){return}
@@ -295,13 +287,9 @@ const kruskalMode = {
             .selectAll("circle.graphNode."+name)
             .filter(d=> v.index === d.index)
             .classed("hover", false)
-            .transition()
-            .duration(this.animationDuration)
-            .attr("r", this.nodeR1)
             })
         .on("mousedown", v=>{
             this.currentNode = v
-            //document.dispatchEvent(customEvent.nodeClicked)
         })
         .call(
             d3
@@ -384,7 +372,6 @@ const kruskalMode = {
         .attr("height", this.height)
             
         sim = d3.forceSimulation(this.graph.vertices)
-            //.force("link", d3.forceLink(graph.edges).distance(100).strength(2))
             .force("link", d3.forceLink(this.graph.edges).distance(50).strength(0.9))
             .force("charge", d3.forceManyBody().strength(-400))
             .force("center", d3.forceCenter(this.width/2,this.height/2))
@@ -399,7 +386,6 @@ const kruskalMode = {
         this.freeze = true
         setTimeout(()=>{this.freeze = false}, this.animationDuration)
         this.draw(name,field,sim);
-        //hide on load
         this.update()
     },
     recenter: function(){

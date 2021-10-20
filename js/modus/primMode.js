@@ -1,5 +1,4 @@
-import * as Algo from '../algo.js';
-import * as Vector from '../2dVector.js'
+import * as Vector from '../tools/2dVector.js'
 import { customEvent } from '../events/customEvent.js';
 import { nodeNameMap } from '../tools/nodeNameMap.js';
 const primMode = {
@@ -23,7 +22,7 @@ const primMode = {
     height : 700,
     nodeR1 : 28,
     nodeR2 : 32,
-    nodeColor : "white",
+    nodeColor : "#b3b3b3",
     nodeSelectedColor : "#6361fd",
     nodeBorderWidth : 2,
     startNodeBorderWidth : 4,
@@ -104,18 +103,16 @@ const primMode = {
     },
 
     lineHover : function(v,name){
-        //TODO
         d3.selectAll("line.clickbox."+name).filter(d=> v.index===d.index)
         .attr("opacity", 0.5)
     },
 
     lineUnhover : function(name){
-        //TODO
         d3.selectAll("line.clickbox."+name)
         .attr("opacity", 0)
     },
     goodMove : function(){
-        //TODO good move, if selected edge is a safe edge and has min weight
+        //good move, if selected edge is a safe edge and has min weight
         let recentEdge = this.selection[this.selection.length-1]
         let setState = this.selectedSet.slice()
         setState.pop()
@@ -276,7 +273,7 @@ const primMode = {
         })
         .attr("stroke-width", v=>{
             if(v.name == this.startVertex) return this.startNodeBorderWidth
-            return this.nodeBorderWidth
+            return 0
         })
     },
 
@@ -347,17 +344,12 @@ const primMode = {
         .classed(name,true)
         .attr("r", d=> this.nodeR1)
         .attr("fill", this.nodeColor)
-        .attr("stroke-width", this.nodeBorderWidth)
-        .attr("stroke", this.nodeBorderColor)
         .on("mouseover", v=>{
             if(this.freeze){return}
             d3
             .selectAll("circle.graphNode."+name)
             .filter(d=> v.index === d.index)
             .classed("hover", true)
-            .transition()
-            .duration(this.animationDuration)
-            .attr("r", this.nodeR2)
         })
         .on("mouseout", v=>{
             if(this.freeze){return}
@@ -365,9 +357,6 @@ const primMode = {
             .selectAll("circle.graphNode."+name)
             .filter(d=> v.index === d.index)
             .classed("hover", false)
-            .transition()
-            .duration(this.animationDuration)
-            .attr("r", this.nodeR1)
             })
         .on("mousedown", v=>{
             if(this.freeze){return}

@@ -1,4 +1,4 @@
-import * as Vector from '../2dVector.js'
+import * as Vector from '../tools/2dVector.js'
 import UnionFind from '../ds/unionFind.js';
 import { customEvent } from '../events/customEvent.js';
 import { nodeNameMap } from '../tools/nodeNameMap.js';
@@ -86,14 +86,6 @@ const undirectedMode = {
     },
 
     lineHover : function(v,name){
-        /*
-        d3.selectAll("line.graphEdge."+name).filter(d=> v.index===d.index)
-        //.transition().duration(animationDuration)
-        .attr("stroke", this.lineHoverColor)//.classed("hover", true)
-        d3.selectAll("line.graphEdge."+name).filter(d=> v.index!=d.index)
-        //.transition().duration(animationDuration)
-        .attr("opacity", this.lineUnhoverOpacity)//.classed("nonhover", true)
-        */
         d3.selectAll("line.clickbox."+name).filter(d=> v.index===d.index)
         .attr("opacity", 0.5)
     },
@@ -101,9 +93,7 @@ const undirectedMode = {
     lineUnhover : function(name){
         
         d3.selectAll("line.graphEdge."+name)
-        //.transition().duration(animationDuration)
         .attr("stroke", e=>{if(this.selection.indexOf(e) < 0){return this.lineUnhoverColor} else{return this.lineSelectedColor}})
-        //.attr("opacity", 1)//.classed("hover", false).classed("nonhover", false)
         
         d3.selectAll("line.clickbox."+name)
         .attr("opacity", 0)
@@ -157,7 +147,6 @@ const undirectedMode = {
         .text(d=> {
             return this.nameMap.nameMap[d.name]
         })
-        //TODO?
         //edgeweight text update
         d3
         .selectAll("text.edge")
@@ -191,7 +180,6 @@ const undirectedMode = {
         d3.selectAll('text.node')
         .attr('x', v => v.x)
         .attr('y', v => v.y + this.textSize/4)
-        //TODO?
         //edge text position
         d3.selectAll("text.edge")
         .attr("x", e => {
@@ -244,17 +232,12 @@ const undirectedMode = {
         .classed(name,true)
         .attr("r", d=> this.nodeR1)
         .attr("fill", this.nodeColor)
-        .attr("stroke-width", this.nodeBorderWidth)
-        .attr("stroke", this.nodeBorderColor)
         .on("mouseover", v=>{
             if(this.freeze){return}
             d3
             .selectAll("circle.graphNode."+name)
             .filter(d=> v.index === d.index)
             .classed("hover", true)
-            .transition()
-            .duration(this.animationDuration)
-            .attr("r", this.nodeR2)
         })
         .on("mouseout", v=>{
             if(this.freeze){return}
@@ -262,9 +245,6 @@ const undirectedMode = {
             .selectAll("circle.graphNode."+name)
             .filter(d=> v.index === d.index)
             .classed("hover", false)
-            .transition()
-            .duration(this.animationDuration)
-            .attr("r", this.nodeR1)
             })
         .on("mousedown", v=>{
             this.currentNode = v
@@ -302,7 +282,7 @@ const undirectedMode = {
         .style("font-size", this.textSize)
         .style("font-weight", "bold")
         .style("fill", "black")
-        // TODO?
+        
         this.edgeText = field
         .selectAll("text.edge."+name)
         .data(this.graph.edges)
@@ -339,7 +319,6 @@ const undirectedMode = {
         
 
         sim = d3.forceSimulation(this.graph.vertices)
-            //.force("link", d3.forceLink(graph.edges).distance(100).strength(2))
             .force("link", d3.forceLink(this.graph.edges).distance(50).strength(0.9))
             .force("charge", d3.forceManyBody().strength(-400))
             .force("center", d3.forceCenter(this.width/2,this.height/2))
@@ -354,7 +333,6 @@ const undirectedMode = {
         this.freeze = true
         setTimeout(()=>{this.freeze = false}, this.animationDuration)
         this.draw(name,field,sim);
-        //hide on load
         this.update()
     },
     recenter: function(){

@@ -1,5 +1,5 @@
 import { directedMode } from "../../modus/directedMode.js";
-import * as A from '../../algo.js';
+import * as A from '../../tools/algo.js';
 import * as G from '../../graphGenerator.js';
 import { sceneManager } from "../sceneManager.js";
 import { mainMenu } from "../mainMenu.js";
@@ -23,7 +23,6 @@ const ssspTree = {
         // UI update
         d3.select("#infoText").html("Tense edges(red) get relaxed on click. Try to relax alledges with the least amount of clicks!")
         this.updateTotal()
-        this.updateSelection()
         this.updateCommand()
     },
     nlogKey : function(e){
@@ -42,7 +41,6 @@ const ssspTree = {
                 this.restart()
                 d3.select("#infoText").html("Created new Graph!")
                 this.updateTotal()
-                this.updateSelection()
                 break
             case "Escape":
                 sceneManager.enterQueue(mainMenu)
@@ -59,17 +57,14 @@ const ssspTree = {
         directedMode.initiateSimulation(this.name1,this.svg1,this.sim1)
     },
     reset : function(){
-        //TODO reset state
         if(this.totalRelaxations > 0){
             directedMode.reset()
             this.totalRelaxations = 0
         }
         d3.select("#infoText").html("Initial state.")
         this.updateTotal()
-        this.updateSelection()
     },
     undo : function(){
-        //TODO undo last move
         if(this.totalRelaxations > 0){
             directedMode.undo()
             this.totalRelaxations -= 1
@@ -79,10 +74,8 @@ const ssspTree = {
             d3.select("#infoText").html("Initial state.")
         }
         this.updateTotal()
-        this.updateSelection()
     },
     win : function(){
-        //TODO called when player has no more tense edges
         console.log("win"+this.totalRelaxations)
         d3.select("#infoText").html('You did it in <SPAN STYLE="font-weight:bold">'
         +this.totalRelaxations+'</SPAN> relaxations!')
@@ -99,7 +92,6 @@ const ssspTree = {
             this.legalMessage()
         }
         this.updateTotal()
-        this.updateSelection()
     },
     cleanup : function(){
         d3.selectAll("svg."+this.name1)
@@ -109,7 +101,6 @@ const ssspTree = {
         ssspTree.mode.recenter()
     },
     exit : function(){
-        //TODO cleanup all UI elements, forcedirected graph
         this.cleanup()
         svg0UI.cleanupUI()
         document.removeEventListener("legalMove", ssspTree.ncheckState)
@@ -128,22 +119,9 @@ const ssspTree = {
     updateTotal : function(){
         d3.select("#total").html(`Total relaxations<br>${this.totalRelaxations}`)
     },
-    //selection update
-    updateSelection : function(){
-        let content = "Relax<br>Recent "
-        for(let i = this.mode.selection.length; i>0 ; i--){
-            let source = this.mode.nameMap.nameMap[this.mode.selection[i-1].source.index]
-            let target = this.mode.nameMap.nameMap[this.mode.selection[i-1].target.index]
-            content = content+ `[${i}]<SPAN STYLE="text-decoration:overline; font-weight:bold">
-            ${source}${target}
-            </SPAN> w: ${this.mode.selection[i-1].key}<br><br>`
-        }
-        d3.select("#selection").html(content)
-    },
     //command display
     updateCommand : function(){
-        let content = "Commands Keybind<br>"
-        + "[E] Undo" + "<br>"
+        let content = "[E] Undo" + "<br>"
         + "[R] Reset" + "<br>"
         + "[Q] New Graph" + "<br>"
         + "[Esc] Return to Main Menu"

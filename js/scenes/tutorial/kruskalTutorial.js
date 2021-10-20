@@ -1,5 +1,5 @@
 import * as G from '../../graphGenerator.js';
-import * as A from '../../algo.js'
+import * as A from '../../tools/algo.js'
 import { svg0UI } from "../../UI/svg0.js";
 import { mainMenu } from "../mainMenu.js";
 import { sceneManager } from "../sceneManager.js";
@@ -26,7 +26,7 @@ const kruskalTutorial = {
     start : function(){
         this.mode = kruskalMode
         svg0UI.drawUI(this.mode)
-        this.graph = G.tutorialGraph() // TODO custom graph
+        this.graph = G.tutorialGraph()
         this.algoGraph = G.copyGraph(this.graph)
         this.kruskalData = A.kruskal(this.algoGraph)
         this.mode.setGraph(this.graph)
@@ -308,8 +308,7 @@ const kruskalTutorial = {
     },
     //command display
     updateCommand : function(){
-        let content = "Commands Keybind<br>"
-        + "[Esc] Return to Main Menu"
+        let content = "[Esc] Return to Main Menu"
         d3.select("#command").html(content)
     },
     //update tutorial info

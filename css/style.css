@@ -157,23 +157,11 @@ svg text{
     text-align: center;
 }
 #total{
-    grid-column: 4/5;
-    grid-row: 1;
-    opacity: 100%;
-    padding: 10px;
-    font-size: 2vw;
-    font-family: "Lusitana";
-    text-align: center;
-    color : white;
-    overflow: auto;
-    z-index: 2;
-}
-#selection{
     grid-column: 8/10;
     grid-row: 1/6;
     background-color:#ffffff;
     padding: 10px;
-    font-size: 2vh;
+    font-size: 4vh;
     font-family: "Lusitana";
     text-align: center;
     overflow: auto;
@@ -291,17 +279,6 @@ svg text{
     font-family: "Lusitana";
     text-align: center;
     overflow: auto;
-}
-#selection2{
-    grid-column: 4/10;
-    grid-row: 5/7;
-    background-color:#ffffff;
-    padding: 10px;
-    font-size: 2vh;
-    font-family: "Lusitana";
-    text-align: center;
-    overflow: auto;
-    visibility: hidden;
 }
 #command2{
     grid-column: 11/13;

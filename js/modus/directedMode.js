@@ -1,6 +1,5 @@
-import * as G from '../graphGenerator.js';
-import * as A from '../algo.js'
-import * as Vector from '../2dVector.js'
+import * as A from '../tools/algo.js'
+import * as Vector from '../tools/2dVector.js'
 import SsspHelp from '../ds/ssspHelp.js';
 import { nodeNameMap } from '../tools/nodeNameMap.js';
 import { customEvent } from '../events/customEvent.js';
@@ -45,7 +44,6 @@ const directedMode = {
     edgeTextOffset : 15,
     animationDuration : 300,
     edgeSelection : [],
-    directG : true,
     startup : true,
     selection : [],
     ssspHelp : undefined,
@@ -54,8 +52,6 @@ const directedMode = {
     minWeight : undefined,
     maxWeight : undefined,
     nameMap : undefined,
-    dijkstraView : false, // see only tense edges dijkstra sees CANNOT UNDO IN DIJKSTRAVIEW!!
-    visited : [], // needed for dijkstraView
     startVertex : undefined, // start
     currentEdge : undefined, //last clicked edge
     currentVertex : undefined, // last clicked vertex
@@ -77,8 +73,6 @@ const directedMode = {
             }
         }
         this.selection = []
-        this.dijkstraView = false
-        this.visited  = []
         this.startVertex = start
     },
 
@@ -103,8 +97,6 @@ const directedMode = {
     reset : function(){
         this.selection = []
         this.ssspHelp.reset()
-        this.dijkstraView = false
-        this.visited  = []
         this.update()
     },
 
@@ -124,24 +116,11 @@ const directedMode = {
         setTimeout(()=>{directedMode.sim1.alphaTarget(0).restart()},directedMode.animationDuration)
     },
 
-    lineHover : function(v,name){
-        //TODO
-    },
-
-    lineUnhover : function(name){
-        //TODO
-    },
-
-    lineClick : function(v,name){
-        //TODO
-    },
-
     ellipseClick : function(v,name,sim){
         this.currentEdge = v
         if(this.ssspHelp.tense(v)){
             this.selection.push(v)
             if (!d3.event.active) sim.alphaTarget(0).stop();
-            //Algo.relax(v)
             this.ssspHelp.relax(v)
             this.update()
             setTimeout(()=>{sim.alphaTarget(0).restart()},this.animationDuration)
@@ -252,7 +231,7 @@ const directedMode = {
         })
         .attr("stroke-width", v=>{
             if(v.name == this.startVertex) return this.startNodeBorderWidth
-            return this.nodeBorderWidth
+            return 0
         })
     
     },
@@ -346,20 +325,6 @@ const directedMode = {
             return 1 + Math.floor((d.key-this.minWeight) / interval)
         })
         .attr("stroke", this.lineUnhoverColor)
-
-        this.linkClickbox = field
-        .selectAll("line.clickbox."+name)
-        .data(this.graph.edges)
-        .enter()
-        .append("line")
-        .attr('class', 'clickbox')
-        .classed(name, true)
-        .attr("stroke-width", this.clickboxSize)
-        .attr("stroke", this.lineUnhoverColor)
-        .attr("opacity", 0)
-        .on("mouseover", v => {if(!this.freeze){return this.lineHover(v,name)}})
-        .on("mouseout", () => {if(!this.freeze){return this.lineUnhover(name)}})
-        .on("mousedown", v => {if(!this.freeze){return this.lineClick(v,name)}})
         
         this.tenseLink = field
         .selectAll("ellipse."+name)
@@ -386,17 +351,12 @@ const directedMode = {
         .classed(name,true)
         .attr("r", d=> this.nodeR1)
         .attr("fill", this.nodeColor)
-        .attr("stroke-width", this.nodeBorderWidth)
-        .attr("stroke", this.nodeBorderColor)
         .on("mouseover", v=>{
             if(this.freeze){return}
             d3
             .selectAll("circle.graphNode."+name)
             .filter(d=> v.index === d.index)
             .classed("hover", true)
-            .transition()
-            .duration(this.animationDuration)
-            .attr("r", this.nodeR2)
         })
         .on("mouseout", v=>{
             if(this.freeze){return}
@@ -404,9 +364,6 @@ const directedMode = {
             .selectAll("circle.graphNode."+name)
             .filter(d=> v.index === d.index)
             .classed("hover", false)
-            .transition()
-            .duration(this.animationDuration)
-            .attr("r", this.nodeR1)
             })
         .on("mousedown", v=>{
             if(this.freeze){return}
@@ -494,7 +451,6 @@ const directedMode = {
 
         
         sim = d3.forceSimulation(this.graph.vertices)
-            //.force("link", d3.forceLink(graph.edges).distance(100).strength(2))
             .force("link", d3.forceLink(this.graph.edges).distance(100).strength(1.9))
             .force("charge", d3.forceManyBody().strength(-1000))
             .force("center", d3.forceCenter(this.width/2,this.height/2))
@@ -504,15 +460,12 @@ const directedMode = {
             .on('tick', () => {
                 this.posCalc()
                 if(this.startup){
-                    //this.update()
                     this.startup = false
                 }
             })
         ;
         this.sim1 = sim
-        //sim.velocityDecay(0.1)
         sim.tick(1000)
-        //sim.velocityDecay(0.3)
         this.freeze = true
         sim.alphaTarget(0.3).restart()
         setTimeout(()=>{this.freeze = false; sim.alphaTarget(0)}, this.animationDuration)
@@ -540,4 +493,3 @@ const directedMode = {
 
 
 export {directedMode}
-//TODO animation tense edge & edge text position

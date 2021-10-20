@@ -1,6 +1,6 @@
 import { directedMode } from "../../modus/directedMode.js";
 import { vsDijkstraGraph } from "../../modus/vsDijkstraGraph.js";
-import * as A from '../../algo.js';
+import * as A from '../../tools/algo.js';
 import * as G from '../../graphGenerator.js';
 import { sceneManager } from "../sceneManager.js";
 import { mainMenu } from "../mainMenu.js";
@@ -28,7 +28,6 @@ const vsDijkstra = {
         //UI update
         d3.select("#infoText2").html("Remove all tense edges with less relaxations than Dijkstra!")
         this.updateTotal()
-        this.updateSelection()
         this.updateCommand()
     },
     nlogKey : function(e){
@@ -47,7 +46,6 @@ const vsDijkstra = {
                 this.restart()
                 d3.select("#infoText2").html("Created new Graph!")
                 this.updateTotal()
-                this.updateSelection()
                 break
             case "Escape":
                 sceneManager.enterQueue(mainMenu)
@@ -72,7 +70,6 @@ const vsDijkstra = {
         //console.log(this.dijkstraData)
     },
     reset : function(){
-        //TODO reset state
         if(this.totalRelaxations > 0){
             directedMode.reset()
             vsDijkstraGraph.reset()
@@ -80,11 +77,9 @@ const vsDijkstra = {
         }
         d3.select("#infoText2").html("Initial state.")
         this.updateTotal()
-        this.updateSelection()
         directedMode.freeze = false
     },
     undo : function(){
-        //TODO undo last move
         if(this.totalRelaxations > 0){
             directedMode.undo()
             vsDijkstraGraph.undo()
@@ -95,23 +90,19 @@ const vsDijkstra = {
             d3.select("#infoText2").html("Initial state.")
         }
         this.updateTotal()
-        this.updateSelection()
         directedMode.freeze = false
 
     },
     win : function(){
-        //TODO called when player has no more tense edges
         console.log("win"+this.totalRelaxations)
         d3.select("#infoText2").html("You win!")
     },
     lose : function(){
-        //TODO called when dijkstra has no more tense edges
         console.log("lose"+this.totalRelaxations)
         d3.select("#infoText2").html("You lose!")
         directedMode.freeze = true
     },
     draw : function(){
-        //TODO called when both have no more tense edges
         console.log("draw")
         d3.select("#infoText2").html("Draw!")
     },
@@ -147,7 +138,6 @@ const vsDijkstra = {
             }
         }
         this.updateTotal()
-        this.updateSelection()
     },
     cleanup : function(){
         d3.selectAll("svg."+this.name1)
@@ -161,7 +151,6 @@ const vsDijkstra = {
         vsDijkstraGraph.recenter()
     },
     exit : function(){
-        //TODO cleanup all UI elements, forcedirected graph
         directedMode.cleanup()
         vsDijkstraGraph.cleanup()
         svg12UI.cleanupUI()
@@ -180,22 +169,9 @@ const vsDijkstra = {
     updateTotal : function(){
         d3.select("#total2").html(`Total relaxations<br>${this.totalRelaxations}`)
     },
-    //selection update
-    updateSelection : function(){
-        let content = "Relax<br>Recent "
-        for(let i = directedMode.selection.length; i>0 ; i--){
-            let source = directedMode.nameMap.nameMap[directedMode.selection[i-1].source.index]
-            let target = directedMode.nameMap.nameMap[directedMode.selection[i-1].target.index]
-            content = content+ `[${i}]<SPAN STYLE="text-decoration:overline; font-weight:bold">
-            ${source}${target}
-            </SPAN> w: ${directedMode.selection[i-1].key}<br><br>`
-        }
-        d3.select("#selection2").html(content)
-    },
     //command display
     updateCommand : function(){
-        let content = "Commands Keybind<br>"
-        + "[E] Undo" + "<br>"
+        let content = "[E] Undo" + "<br>"
         + "[R] Reset" + "<br>"
         + "[Q] New Graph" + "<br>"
         + "[Esc] Return to Main Menu"

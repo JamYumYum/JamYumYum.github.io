@@ -1,6 +1,6 @@
 import * as G from '../graphGenerator.js';
-import * as A from '../algo.js'
-import * as Vector from '../2dVector.js'
+import * as A from '../tools/algo.js'
+import * as Vector from '../tools/2dVector.js'
 import SsspHelp from '../ds/ssspHelp.js';
 import { nodeNameMap } from '../tools/nodeNameMap.js';
 const vsDijkstraGraph = {
@@ -106,17 +106,6 @@ const vsDijkstraGraph = {
         .remove()
     },
 
-    lineHover : function(v,name){
-        //TODO
-    },
-
-    lineUnhover : function(name){
-        //TODO
-    },
-
-    lineClick : function(v,name){
-        //TODO
-    },
     dijkstraClick : function(step){
         d3.selectAll("ellipse."+vsDijkstraGraph.svg)
         .filter(d => d.index === vsDijkstraGraph.dijkstraData.edgeSelection[step].index)
@@ -215,7 +204,7 @@ const vsDijkstraGraph = {
         })
         .attr("stroke-width", v=>{
             if(v.name == this.startVertex) return this.startNodeBorderWidth
-            return this.nodeBorderWidth
+            return 0
         })
         
     },
@@ -310,20 +299,6 @@ const vsDijkstraGraph = {
         })
         .attr("stroke", this.lineUnhoverColor)
 
-        this.linkClickbox = field
-        .selectAll("line.clickbox."+name)
-        .data(this.graph.edges)
-        .enter()
-        .append("line")
-        .attr('class', 'clickbox')
-        .classed(name, true)
-        .attr("stroke-width", this.clickboxSize)
-        .attr("stroke", this.lineUnhoverColor)
-        .attr("opacity", 0)
-        .on("mouseover", v => {if(!this.freeze){return this.lineHover(v,name)}})
-        .on("mouseout", () => {if(!this.freeze){return this.lineUnhover(name)}})
-        .on("mousedown", v => {if(!this.freeze){return this.lineClick(v,name)}})
-        
         this.tenseLink = field
         .selectAll("ellipse."+name)
         .data(this.graph.edges)
@@ -348,17 +323,12 @@ const vsDijkstraGraph = {
         .classed(name,true)
         .attr("r", d=> this.nodeR1)
         .attr("fill", this.nodeColor)
-        .attr("stroke-width", this.nodeBorderWidth)
-        .attr("stroke", this.nodeBorderColor)
         .on("mouseover", v=>{
             if(this.freeze){return}
             d3
             .selectAll("circle.graphNode."+name)
             .filter(d=> v.index === d.index)
             .classed("hover", true)
-            .transition()
-            .duration(this.animationDuration)
-            .attr("r", this.nodeR2)
         })
         .on("mouseout", v=>{
             if(this.freeze){return}
@@ -366,9 +336,6 @@ const vsDijkstraGraph = {
             .selectAll("circle.graphNode."+name)
             .filter(d=> v.index === d.index)
             .classed("hover", false)
-            .transition()
-            .duration(this.animationDuration)
-            .attr("r", this.nodeR1)
             })
         .call(
             d3

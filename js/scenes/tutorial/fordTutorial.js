@@ -1,5 +1,5 @@
 import { directedMode } from "../../modus/directedMode.js";
-import * as A from '../../algo.js';
+import * as A from '../../tools/algo.js';
 import * as G from '../../graphGenerator.js';
 import { sceneManager } from "../sceneManager.js";
 import { mainMenu } from "../mainMenu.js";
@@ -17,7 +17,7 @@ const fordTutorial = {
     start : function(){
         this.mode = directedMode
         svg0UI.drawUI(this.mode)
-        this.graph1 = G.tutorialGraph() // TODO custom graph
+        this.graph1 = G.tutorialGraph()
         this.mode.setGraph(this.graph1)
         this.mode.initiateSimulation(this.name1,this.svg1,this.sim1)
         this.totalRelaxations = 0
@@ -183,8 +183,7 @@ const fordTutorial = {
     },
     //command display
     updateCommand : function(){
-        let content = "Commands Keybind<br>"
-        + "[Esc] Return to Main Menu"
+        let content = "[Esc] Return to Main Menu"
         d3.select("#command").html(content)
     },
     //update tutorial info

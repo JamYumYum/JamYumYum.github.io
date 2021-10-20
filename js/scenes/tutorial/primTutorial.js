@@ -1,6 +1,6 @@
 import { primMode } from "../../modus/primMode.js"
 import * as G from '../../graphGenerator.js';
-import * as A from '../../algo.js'
+import * as A from '../../tools/algo.js'
 import { svg0UI } from "../../UI/svg0.js";
 import { mainMenu } from "../mainMenu.js";
 import { sceneManager } from "../sceneManager.js";
@@ -26,9 +26,8 @@ const primTutorial = {
     start : function(){
         this.mode = primMode
         svg0UI.drawUI(this.mode)
-        this.graph = G.tutorialGraph() // TODO custom graph
+        this.graph = G.tutorialGraph() 
         this.algoGraph = G.copyGraph(this.graph)
-        //this.primData = A.prim(this.graph, 0)
         this.mode.setGraph(this.graph)
         this.mode.initiateSimulation(this.name1,this.svg1,this.sim1)
         this.step = 0
@@ -426,8 +425,7 @@ const primTutorial = {
     },
     //command display
     updateCommand : function(){
-        let content = "Commands Keybind<br>"
-        + "[Esc] Return to Main Menu"
+        let content = "[Esc] Return to Main Menu"
         d3.select("#command").html(content)
     },
     //update tutorial info

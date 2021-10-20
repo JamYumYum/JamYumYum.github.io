@@ -3,7 +3,7 @@ import { kruskalMode } from "../../modus/kruskalMode.js"
 import { undirectedMode } from "../../modus/undirectedMode.js"
 import { sceneManager } from "../sceneManager.js";
 import * as G from '../../graphGenerator.js';
-import * as A from '../../algo.js'
+import * as A from '../../tools/algo.js'
 import { mainMenu } from "../mainMenu.js";
 import { svg0UI } from "../../UI/svg0.js";
 
@@ -26,10 +26,9 @@ const buildMST = {
     inspectorContent : undefined,
     stateContent : undefined,
     start : function(){
-        //TODO selection for visual help (prim/kruskal/none), setting up interactive force directed graph
         this.mode = undirectedMode
         svg0UI.drawUI(this.mode)
-        this.graph = G.mstGraph() // set graph TODO? change to better graph
+        this.graph = G.mstGraph()
         this.primData = A.prim(this.graph, 0)
         this.kruskalData = A.kruskal(this.graph)
         this.mode.setGraph(this.graph)
@@ -38,7 +37,6 @@ const buildMST = {
         this.generateGame()
         console.log(d3.select("svg"))
         console.log(document.getElementById("svg0"))
-        // TODO move eventlistener to selectMode
         document.addEventListener("legalMove", buildMST.ncheckState)
         document.addEventListener("keydown", buildMST.nlogKey)
         document.addEventListener("illegalMove", buildMST.nIllegalMessage)
@@ -46,9 +44,6 @@ const buildMST = {
         document.addEventListener("nodeClicked", buildMST.nNodeClicked)
         window.addEventListener("resize", this.nrecenter)
 
-        //fetch("../../../text/testText.txt")
-        //.then(response => response.text())
-        //.then(text => d3.select("#infoText").html(text))
         d3.select("#infoText").html("Click on Edges in order to add them to your tree. Try to build a MST!")
     },
     nlogKey : function(e){
@@ -86,9 +81,8 @@ const buildMST = {
         }
     },
     restart : function(){
-        //TODO
         this.cleanup()
-        this.graph = G.mstGraph() // set graph TODO? change to better graph
+        this.graph = G.mstGraph()
         this.primData = A.prim(this.graph, 0)
         this.kruskalData = A.kruskal(this.graph)
         this.mode.setGraph(this.graph)
@@ -96,12 +90,10 @@ const buildMST = {
         this.generateGame()
     },
     selectMode : function(mode){
-        //TODO cleanup selectModeUI elements,eventlisteners, set the mode, call start
         this.mode = mode
         this.restart()
     },
     generateGame : function(){
-        //TODO
         this.freeze = true
         switch(this.mode.ID){
             case "prim":
@@ -128,7 +120,6 @@ const buildMST = {
         }
         this.freeze = false
         this.updateTotal()
-        this.updateSelection()
         this.updateCommand()
     },
     reset(){
@@ -143,7 +134,6 @@ const buildMST = {
             d3.select("#infoText").html("Initial state.")
         }
         this.updateTotal()
-        this.updateSelection()
     },
     undo(){
         this.mode.freeze = false
@@ -158,23 +148,19 @@ const buildMST = {
             this.reset()
         }
         this.updateTotal()
-        this.updateSelection()
     },
     win : function(){
-        //TODO
         console.log("win")
         d3.select("#infoText").html('You did it! The minimum weight is indeed <SPAN STYLE="font-weight:bold">'
         +this.minWeight+'</SPAN>.')
     },
     lose : function(){
-        //TODO
         d3.select("#infoText").html("Try again! Your tree is too heavy!")
     },
     ncheckState : function(){
         buildMST.checkState()
     },
     checkState : function(){
-        //TODO
         // on click on a safe edge 
         if(this.freeze){
             return
@@ -191,7 +177,6 @@ const buildMST = {
                 this.win()
             }
         }
-        this.updateSelection()
         this.updateTotal()
     },
     cleanup : function(){
@@ -245,22 +230,9 @@ const buildMST = {
     updateTotal : function(){
         d3.select("#total").html(`Total weight<br>${this.totalWeight}`)
     },
-    //selection update
-    updateSelection : function(){
-        let content = "Selection<br>Recent "
-        for(let i = this.edgeSelection.length; i>0 ; i--){
-            let source = buildMST.mode.nameMap.nameMap[this.edgeSelection[i-1].source.index]
-            let target = buildMST.mode.nameMap.nameMap[this.edgeSelection[i-1].target.index]
-            content = content+ `[${i}]<SPAN STYLE="text-decoration:overline; font-weight:bold">
-            ${source}${target}
-            </SPAN> w: ${this.edgeSelection[i-1].key}<br><br>`
-        }
-        d3.select("#selection").html(content)
-    },
     //command display
     updateCommand : function(){
-        let content = "Commands Keybind<br>"
-        + "[E] Undo" + "<br>"
+        let content = "[E] Undo" + "<br>"
         + "[R] Reset" + "<br>"
         + "[Q] New Graph" + "<br>"
         + "[1] Display prim's safe edge support" + "<br>"
