@@ -1,6 +1,6 @@
 import { directedMode } from "../../modus/directedMode.js";
 import * as A from '../../tools/algo.js';
-import * as G from '../../graphGenerator.js';
+import * as G from '../../tools/graphGenerator.js';
 import { sceneManager } from "../sceneManager.js";
 import { mainMenu } from "../mainMenu.js";
 import { svg0UI } from "../../UI/svg0.js";

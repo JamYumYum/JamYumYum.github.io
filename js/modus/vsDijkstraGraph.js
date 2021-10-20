@@ -1,4 +1,4 @@
-import * as G from '../graphGenerator.js';
+import * as G from '../tools/graphGenerator.js';
 import * as A from '../tools/algo.js'
 import * as Vector from '../tools/2dVector.js'
 import SsspHelp from '../ds/ssspHelp.js';

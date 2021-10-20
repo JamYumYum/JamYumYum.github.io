@@ -1,7 +1,7 @@
 import { primMode } from "../../modus/primMode.js"
 import { kruskalMode } from "../../modus/kruskalMode.js"
 import { undirectedMode } from "../../modus/undirectedMode.js"
-import * as G from '../../graphGenerator.js';
+import * as G from '../../tools/graphGenerator.js';
 import * as A from '../../tools/algo.js'
 import { sceneManager } from "../sceneManager.js";
 import { mainMenu } from "../mainMenu.js";

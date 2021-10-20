@@ -1,7 +1,7 @@
 import { directedMode } from "../../modus/directedMode.js";
 import { vsDijkstraGraph } from "../../modus/vsDijkstraGraph.js";
 import * as A from '../../tools/algo.js';
-import * as G from '../../graphGenerator.js';
+import * as G from '../../tools/graphGenerator.js';
 import { sceneManager } from "../sceneManager.js";
 import { mainMenu } from "../mainMenu.js";
 import {svg12UI} from "../../UI/svg12.js";
