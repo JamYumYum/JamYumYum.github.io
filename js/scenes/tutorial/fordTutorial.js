@@ -1,5 +1,4 @@
 import { directedMode } from "../../modus/directedMode.js";
-import * as A from '../../tools/algo.js';
 import * as G from '../../tools/graphGenerator.js';
 import { sceneManager } from "../sceneManager.js";
 import { mainMenu } from "../mainMenu.js";
@@ -35,7 +34,6 @@ const fordTutorial = {
         
         this.updateCommand()
         this.updateInfo()
-        //d3.select("#infoText").html("Ford's algorithm calculates the minimum distance paths from a single source to every other vertex. Start by clicking on a start Vertex.")
         d3.select("#infoText").html("Ford's algorithm tutorial. Start by selecting a vertex. Click on any one.")
     },
     nlogKey : function(e){
@@ -60,7 +58,6 @@ const fordTutorial = {
     exit : function(){
         this.cleanup()
         svg0UI.cleanupUI()
-        this.unlock()
         document.removeEventListener("legalMove", fordTutorial.nRelax)
         document.removeEventListener("nodeClicked", fordTutorial.nNodeClicked)
         document.removeEventListener("keydown", fordTutorial.nlogKey)
@@ -87,23 +84,19 @@ const fordTutorial = {
         }
         fordTutorial.predecessor[directedMode.currentEdge.target.name] = directedMode.currentEdge.source.name
         fordTutorial.distance[directedMode.currentEdge.target.name] = directedMode.ssspHelp.distance[directedMode.currentEdge.target.name]
-        fordTutorial.updateSelection()
 
         if(directedMode.totalTenseEdges == 0){
             // finish, no tense edges
-            //fordTutorial.next(fordTutorial.nFinish)
             d3.select("#infoText").html(`${edge} relaxed, updated the distance of ${target}, 
             ${source} is now the predecessor of ${target}. No more tense edges, Ford is done! Press [Esc] to return.`)
             return
         }
-        //fordTutorial.next(fordTutorial.nNext)
         fordTutorial.totalRelaxations += 1
     },
 
     nNodeClicked : function(){
         d3.select("#infoText").html(`You chose <SPAN STYLE="font-weight:bold">${directedMode.nameMap.nameMap[directedMode.currentVertex.name]}</SPAN> 
         as starting vertex. Initial distances have been generated! Tense edges are red and swollen, now click on a tense edge!`)
-        //fordTutorial.next(fordTutorial.nExplainTense)
         
         for(let i = 0; i< fordTutorial.graph1.vertices.length; i++){
             fordTutorial.distance[i] = fordTutorial.graph1.vertices[i].key
@@ -112,74 +105,6 @@ const fordTutorial = {
         fordTutorial.predecessor[directedMode.startVertex] = directedMode.startVertex
         console.log(fordTutorial.distance)
         fordTutorial.updateSelection()
-    },
-    nExplainTense : function(){
-        fordTutorial.unlock()
-        d3.select("#infoText").html(`For an edge, if the sum of its weight and the distance of its tail is greater than the distance 
-        of its head, then the edge is called tense. A tense edge is displayed as swollen and red here. Now click on any tense edge!`)
-    },
-    nNext : function(){
-        fordTutorial.unlock()
-        d3.select("#infoText").html(`Relax another tense edge!`)
-    },
-    nFinish : function(){
-        fordTutorial.unlock()
-        d3.select("#infoText").html("Finish, no edges are tense!")
-        fordTutorial.next(fordTutorial.nQuit)
-        d3.select(".confirmText").html("Quit")
-    },
-    nQuit : function(){
-        fordTutorial.unlock()
-        sceneManager.enterQueue(mainMenu)
-        sceneManager.nextScene()
-    },
-
-
-    //update sorted edges in div tag with id #selection
-    updateSelection : function(extracted,firstInsert){
-        let content = "Data<br><br>"
-        for(let i = 0; i< this.graph1.vertices.length;i++){
-            let source = `<SPAN STYLE="font-weight:bold">${directedMode.nameMap.nameMap[i]}</SPAN>`
-            let target = `<SPAN STYLE="font-weight:bold">${directedMode.nameMap.nameMap[this.predecessor[i]]}</SPAN>`
-            if(directedMode.nameMap.nameMap[this.predecessor[i]] == undefined){
-                console.log(target)
-                target = `<SPAN STYLE="font-weight:bold">-</SPAN>`
-            }
-            let weight = `<SPAN STYLE="font-weight:bold">${this.distance[i]}</SPAN>`
-            content += `[${source}] = {dist: ${weight}, pred: ${target}}<br><br>`
-        }
-        d3.select("#selection").html(content)
-    },
-    //messages
-    createMessage : function(number){
-        
-    },
-
-
-
-    lock : function(){
-        //Lock svg, click on button to unlock
-        d3.select("body").append("div").classed("lock", true)
-        d3.select("body").append("div").classed("confirm", true)
-        d3.select(".confirm").append("div").classed("confirmText", true).html("OK")
-        d3.select(".confirm").on("mousedown", v=>{
-            console.log("unlock")
-            d3.select(".lock").remove()
-            d3.select(".confirm").remove()
-        })
-    },
-    unlock : function(){
-        //remove the lock
-        console.log("unlock")
-        d3.select(".lock").remove()
-        d3.select(".confirm").remove()
-    },
-    next : function(nextFunction, parameter1){
-        //lock svg, continues after button click
-        d3.select("body").append("div").classed("lock", true)
-        d3.select("body").append("div").classed("confirm", true).classed("next",true)
-        d3.select(".confirm").append("div").classed("confirmText", true).html("Next")
-        d3.select(".confirm").on("mousedown", v=>{nextFunction(parameter1)})
     },
     //command display
     updateCommand : function(){

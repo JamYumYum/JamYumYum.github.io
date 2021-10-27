@@ -63,11 +63,10 @@ const vsDijkstra = {
         this.dijkstraData = A.dijkstra(this.graph2, 0)
         directedMode.setGraph(this.graph1,0)
         vsDijkstraGraph.setGraph(this.graph2)
-        directedMode.initiateSimulation(this.name1,this.svg1,this.sim1)//.then(directedMode.test())
+        directedMode.initiateSimulation(this.name1,this.svg1,this.sim1)
         vsDijkstraGraph.initiateSimulation(this.name2,this.svg2,this.sim2)
         vsDijkstraGraph.freeze = true
         directedMode.freeze = false
-        //console.log(this.dijkstraData)
     },
     reset : function(){
         if(this.totalRelaxations > 0){
